@@ -15,6 +15,7 @@ enum NodeType: char {
 }; 
 
 class Gene {
+    public:
         //4 2 2 2 1
         float weight;
         ushort fromIdx;
@@ -22,10 +23,9 @@ class Gene {
         ushort innovationIdx; 
         bool enabled;
 
-        public:
-            Gene(ushort from, ushort to, float weight);
-            void print();
-            void setInnov(ushort innov);
-            void mutateWeight();
+        Gene(ushort from, ushort to, float weight);
+        void print();
+        void setInnov(ushort innov);
+        void mutateWeight();
 };
 }

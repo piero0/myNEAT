@@ -6,8 +6,8 @@ Gene::Gene(ushort from, ushort to, float weight) {
     fromIdx = from;
     toIdx = to;
     this->weight = weight;
-    enabled = true;
-    //innovationIdx = innov;
+    innovationIdx = 0;
+    enabled = true;    
 }
 
 void Gene::print() {
@@ -19,6 +19,7 @@ void Gene::setInnov(ushort innov) {
 }
 
 void Gene::mutateWeight() {
+    // TODO: move this into a better place
     std::random_device rd;  
     std::mt19937 gen(rd()); 
     std::uniform_real_distribution<> dis(-0.5, 0.5);

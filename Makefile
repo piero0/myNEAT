@@ -2,8 +2,8 @@
 CXXFLAGS = -std=c++14 -Wall 
 LDLIBS = 
 
-objs = gene.o genome.o organism.o test.o 
-exec = test
+objs = gene.o genome.o organism.o util.o main.o 
+exec = main
 
 debug: CXXFLAGS += -g -DDEBUG
 debug: $(exec)
@@ -14,7 +14,8 @@ release: $(exec)
 $(exec): $(objs)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-test.o: genome.hpp
+main.o: genome.hpp
+util.o: util.hpp
 gene.o: gene.cpp gene.hpp
 genome.o: genome.cpp genome.hpp
 organism.o: organism.cpp organism.hpp

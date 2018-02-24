@@ -3,11 +3,10 @@
 
 namespace pneat {
     class Organism {
-        std::vector<Gene> gens;
+        Genome g;
 
         public:
-            Organism();
-            void cloneAndMutate(Genome& genome);
-            void print();
+            Organism(Genome& g);
+            Genome& getGenome() {return g;}
     };
 }

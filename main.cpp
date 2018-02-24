@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
         std::cout << "get child" << std::endl;
 
         ptree::key_type key = "gens.";
-        ushort idx = 1;
+        // ushort idx = 1;
         for(auto& el: pt.get_child(key)) {
             /*for(auto& el: pt.get_child(key+"."+el2.first)) {
                 if(idx%3 == 0) {
@@ -95,9 +95,9 @@ int main(int argc, char* argv[]) {
 
     std::cout << "New organism" << std::endl;
 
-    Organism org;
-    org.cloneAndMutate(gnm);
-    org.print();
+    Organism org(gnm);
+    // org.cloneAndMutate(gnm);
+    // org.print();
 
     //Make a population
 

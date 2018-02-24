@@ -2,14 +2,6 @@
 
 using namespace pneat;
 
-Organism::Organism() {
-}
-
-void Organism::cloneAndMutate(Genome& genome) {
-    gens = genome.getGenes();
-    for(auto& el: gens) el.mutateWeight();
-}
-
-void Organism::print() {
-    for(auto& el: gens) el.print();
+Organism::Organism(Genome& g) {
+    this->g = g;
 }

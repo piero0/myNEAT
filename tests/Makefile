@@ -2,7 +2,8 @@
 CXXFLAGS = -std=c++14 -Wall 
 LDLIBS = 
 
-objs = testMain.o test01.o
+neatLib = ../organism.o ../genome.o ../gene.o ../util.o
+objs = testMain.o test01.o 
 exec = unitTest
 catch = catch.hpp
 
@@ -16,7 +17,7 @@ hdr:
 	$(CXX) $(CXXFLAGS) -c $(catch)
 
 $(exec): $(objs)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(neatLib)
 
 test01.o: test01.cpp $(catch)
 

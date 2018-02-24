@@ -1,4 +1,5 @@
 {
+    "population": 150,
     "sensors": 2,
     "outputs": 1,
     "hidden": 1,
