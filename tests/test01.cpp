@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "../organism.hpp"
+#include "../util.hpp"
 
 /*
     //What I want API
@@ -25,7 +26,7 @@
 using namespace pneat;
 
 TEST_CASE("Genes", "[gene]") {
-    Gene g(1, 2, 0.5);
+    Gene g(1, 2, 0.5, 0);
 
     REQUIRE(g.fromIdx == 1);
     REQUIRE(g.toIdx == 2);
@@ -72,7 +73,7 @@ TEST_CASE("Genome", "[genome]") {
     }
 
     SECTION("Add Genes") {
-        Gene g1(1,2,0.5), g2(2,3,0.7), g3(3,4,0.1);
+        Gene g1(1,2,0.5,0), g2(2,3,0.7,1), g3(3,4,0.1,2);
         gnm.addGene(g1);
         gnm.addGene(g2);
         gnm.addGene(g3);
@@ -99,11 +100,40 @@ TEST_CASE("Genome", "[genome]") {
             REQUIRE(gns1[2].weight != gns2[2].weight);
         }
     }
+
+    SECTION("Check link exist") {
+        Gene g1(1,2,0.5,0), g2(2,3,0.7,1), g3(3,4,0.1,2);
+        gnm.addGene(g1);
+        gnm.addGene(g2);
+        gnm.addGene(g3);
+        REQUIRE(gnm.checkLinkExist(3,4) == true);
+        REQUIRE(gnm.checkLinkExist(4,5) == false);
+    }
+
+    SECTION("mutateAddLink") {
+        Gene g1(0, 2, 0.5, 0), g2(1, 2, 0.7, 1), g3(2, 3, 0.1, 2);
+
+        gnm.addNode(NodeType::SENSOR);
+        gnm.addNode(NodeType::SENSOR);
+        gnm.addNode(NodeType::OUTPUT);
+        gnm.addNode(NodeType::HIDDEN);
+        gnm.addGene(g1); gnm.addGene(g2); gnm.addGene(g3);
+        
+        Genome master = gnm;
+
+        gnm.setMaster(&master);
+        gnm.mutateAddLink();
+
+        Gene mut = gnm.getGenes()[3];
+        REQUIRE(gnm.getNextInnov() == 4);
+        REQUIRE(mut.fromIdx != 2);
+        REQUIRE(mut.toIdx > 1);
+    }
 }
 
 TEST_CASE("Organism", "[organism]") {
     Genome gnm;
-    Gene g1(1,2,0.5), g2(2,3,0.7), g3(3,4,0.1);
+    Gene g1(1,2,0.5,0), g2(2,3,0.7,1), g3(3,4,0.1,2);
     gnm.addGene(g1);
     gnm.addGene(g2);
     gnm.addGene(g3);
@@ -114,4 +144,14 @@ TEST_CASE("Organism", "[organism]") {
     Genome g = o1.getGenome();
     REQUIRE(&g != &gnm);
     REQUIRE(g.getGenes().size() != gnm.getGenes().size());
+}
+
+TEST_CASE("Util", "[util]") {
+    auto& g1 = Util::getRandomGen();
+    auto& g2 = Util::getRandomGen();
+    REQUIRE(&g1 == &g2);
+    
+    g1.setIntDist(0, 1);
+    ushort num = g1.nextInt();
+    REQUIRE((num == 0 || num == 1));
 }

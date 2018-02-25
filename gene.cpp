@@ -2,11 +2,11 @@
 
 using namespace pneat;
 
-Gene::Gene(ushort from, ushort to, float weight) {
+Gene::Gene(ushort from, ushort to, float weight, ushort innov) {
     fromIdx = from;
     toIdx = to;
     this->weight = weight;
-    innovationIdx = 0;
+    innovationIdx = innov;
     enabled = true;    
 }
 

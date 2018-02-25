@@ -23,4 +23,4 @@ test01.o: test01.cpp $(catch)
 
 .PHONY: clean
 clean:
-	rm $(exec) $(objs)
+	rm -f $(exec) $(objs)

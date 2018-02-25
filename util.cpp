@@ -27,10 +27,3 @@ floatDist& Util::setFloatDist(float begin, float end) {
     return fdist;
 }
 
-ushort Util::nextInt() {
-    return udist(gen);
-}
-
-float Util::nextFloat() {
-    return fdist(gen);
-}

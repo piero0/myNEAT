@@ -7,6 +7,6 @@ namespace pneat {
 
         public:
             Organism(Genome& g);
-            Genome& getGenome() {return g;}
+            Genome& getGenome() { return g; }
     };
 }

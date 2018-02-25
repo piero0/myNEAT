@@ -23,7 +23,7 @@ class Gene {
         ushort innovationIdx; 
         bool enabled;
 
-        Gene(ushort from, ushort to, float weight);
+        Gene(ushort from, ushort to, float weight, ushort innov);
         void print();
         void setInnov(ushort innov);
         void mutateWeight();

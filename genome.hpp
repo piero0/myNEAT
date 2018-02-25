@@ -1,7 +1,9 @@
 #pragma once
 #include <tuple>
 #include <chrono>
+#include <algorithm>
 #include "gene.hpp"
+#include "util.hpp"
 
 namespace pneat {
     using Genes = std::vector<Gene>;
@@ -9,6 +11,7 @@ namespace pneat {
 
     class Genome {
         Genes genes;
+        Genome* masterGenome;
         ushort sensorNum;
         ushort outputNum;
         ushort hiddenNum;
@@ -21,9 +24,9 @@ namespace pneat {
 
         public:
             Genome();
-            void testSize();
-            Genes& getGenes() {return genes;}
-            void addGene(Gene g);
+            void setMaster(Genome* gnm) { masterGenome = gnm; }
+            Genes& getGenes() { return genes; }
+            void addGene(Gene g) { genes.push_back(g); }
             void addNode(NodeType nt);
             void print();
             
@@ -32,5 +35,8 @@ namespace pneat {
 
             void mutateAddNode();
             void mutateAddLink();
+
+            bool checkLinkExist(ushort from, ushort to);
+            ushort getNextInnov() { return genes.size(); }
     };
 }

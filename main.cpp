@@ -17,7 +17,6 @@ int main(int argc, char* argv[]) {
     std::cout << nv.size() << std::endl;
 
     pneat::Genome g;
-    g.testSize();
 
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser_error;
@@ -85,11 +84,11 @@ int main(int argc, char* argv[]) {
     gnm.addNode(NodeType::HIDDEN);
     gnm.addNode(NodeType::OUTPUT);
     
-    gnm.addGene(Gene(0, 3, 0.25));
-    gnm.addGene(Gene(1, 3, 0.27));
-    gnm.addGene(Gene(0, 2, 0.35));
-    gnm.addGene(Gene(1, 2, 0.38));
-    gnm.addGene(Gene(2, 3, 0.55));
+    gnm.addGene(Gene(0, 3, 0.25, 0));
+    gnm.addGene(Gene(1, 3, 0.27, 1));
+    gnm.addGene(Gene(0, 2, 0.35, 2));
+    gnm.addGene(Gene(1, 2, 0.38, 3));
+    gnm.addGene(Gene(2, 3, 0.55, 4));
 
     gnm.print();
 

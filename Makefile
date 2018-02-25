@@ -15,11 +15,11 @@ $(exec): $(objs)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 main.o: genome.hpp
-util.o: util.hpp
 gene.o: gene.cpp gene.hpp
-genome.o: genome.cpp genome.hpp
+genome.o: genome.cpp genome.hpp util.hpp
 organism.o: organism.cpp organism.hpp
+util.o: util.hpp
 
 .PHONY: clean
 clean:
-	rm $(exec) $(objs)
+	rm -f $(exec) $(objs)

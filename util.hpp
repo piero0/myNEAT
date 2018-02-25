@@ -24,7 +24,7 @@ class Util {
         ushortDist& setIntDist(ushort begin, ushort end);
         floatDist& setFloatDist(float begin, float end);
 
-        ushort nextInt();
-        float nextFloat();
+        ushort nextInt() { return udist(gen); }
+        float nextFloat() { return fdist(gen); }
 };
 }
