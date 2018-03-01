@@ -3,27 +3,14 @@
 using namespace pneat;
 
 Genome::Genome() {
-    sensorNum = 0;
-    outputNum = 0;
-    hiddenNum = 0;
     masterGenome = this;
-}
-
-void Genome::addNode(NodeType nt) {
-    switch(nt) {
-        case NodeType::SENSOR:
-            sensorNum++; break;
-        case NodeType::OUTPUT:
-            outputNum++; break;
-        case NodeType::HIDDEN:
-            hiddenNum++; break;    
-    };
 }
 
 void Genome::print() {
     std::cout << "Nodes:" << std::endl;
-    std::cout << "Sensor: " << sensorNum << " Output: "
-    << outputNum << " Hidden: " << hiddenNum << std::endl;
+    std::cout << "Sensor: " << nodes.getSensorNum() 
+    << " Output: " << nodes.getOutputNum()
+    << " Hidden: " << nodes.getHiddenNum() << std::endl;
     std::cout << "Genes:" << std::endl;
     for(auto& g: genes) g.print();
 }
@@ -33,10 +20,6 @@ void Genome::mutateWeights() {
     u.setFloatDist(-0.5, 0.5);
 
     for(auto& el: genes) el.weight += u.nextFloat();
-}
-
-short3 Genome::getNodeNum() {
-    return std::make_tuple(sensorNum, outputNum, hiddenNum);
 }
 
 void Genome::mutateAddNode() {
@@ -61,32 +44,35 @@ void Genome::mutateAddNode() {
     g.enabled = false;
 
     //Does the number is the same for the master and here?
-    ushort newNodeIdx = sensorNum+outputNum+hiddenNum+1;
+    ushort newNodeIdx = nodes.getCount() + 1;
 
     //Create new links
     Gene newFrom = Gene(g.fromIdx, newNodeIdx, g.weight, masterGenome->getNextInnov());
     Gene newTo = Gene(newNodeIdx, g.toIdx, g.weight, masterGenome->getNextInnov());
 
-    this->addNode(NodeType::HIDDEN);
+    nodes.addNode();
     this->addGene(newFrom);
     this->addGene(newTo);
 
-    masterGenome->addNode(NodeType::HIDDEN);
+    masterGenome->getNodes().addNode();
     masterGenome->addGene(newFrom);
     masterGenome->addGene(newTo);
 }
 
 void Genome::mutateAddLink() {
     Util& rnd = Util::getRandomGen();
-    ushort fromIdx = 0, toIdx = 0;
+    ushort fromIdx = 0, toIdx = 0,
+        sensNum = nodes.getSensorNum(),
+        hidNum = nodes.getHiddenNum(),
+        outNum = nodes.getOutputNum();
     do {
         //fromIdx - non-output node
-        rnd.setIntDist(0, sensorNum+hiddenNum-1);
+        rnd.setIntDist(0, sensNum+hidNum-1);
         fromIdx = rnd.nextInt();
-        if(fromIdx >= sensorNum) fromIdx += outputNum;
+        if(fromIdx >= sensNum) fromIdx += outNum;
         //toIdx - non-sensor node
-        rnd.setIntDist(0, outputNum+hiddenNum-1);
-        toIdx = rnd.nextInt() + sensorNum;
+        rnd.setIntDist(0, outNum+hidNum-1);
+        toIdx = rnd.nextInt() + sensNum;
     } while( masterGenome->checkLinkExist(fromIdx, toIdx) );
 
     rnd.setFloatDist(0.0, 1.0);

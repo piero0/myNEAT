@@ -79,10 +79,11 @@ int main(int argc, char* argv[]) {
     using pneat::Organism;
 
     Genome gnm;
-    gnm.addNode(NodeType::SENSOR);
-    gnm.addNode(NodeType::SENSOR);
-    gnm.addNode(NodeType::HIDDEN);
-    gnm.addNode(NodeType::OUTPUT);
+    auto& nodes = gnm.getNodes();
+    nodes.addSensor();
+    nodes.addSensor();
+    nodes.addNode();
+    nodes.addOutput();
     
     gnm.addGene(Gene(0, 3, 0.25, 0));
     gnm.addGene(Gene(1, 3, 0.27, 1));

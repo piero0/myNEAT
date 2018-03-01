@@ -52,24 +52,28 @@ TEST_CASE("Genome", "[genome]") {
     auto& g = gnm.getGenes();
     REQUIRE(g.size() == 0);
 
-    auto tpl = gnm.getNodeNum();
+    auto& nodes = gnm.getNodes();
+    auto n1 = nodes.getSensorNum();
+    auto n2 = nodes.getOutputNum();
+    auto n3 = nodes.getHiddenNum();
 
-    REQUIRE(std::get<0>(tpl) == 0);
-    REQUIRE(std::get<1>(tpl) == 0);
-    REQUIRE(std::get<2>(tpl) == 0);
+    REQUIRE(n1 == 0);
+    REQUIRE(n2 == 0);
+    REQUIRE(n3 == 0);
 
     SECTION("Add Nodes") {
-        gnm.addNode(NodeType::OUTPUT);
-        tpl = gnm.getNodeNum();
-        REQUIRE(std::get<1>(tpl) == 1);
+        nodes = gnm.getNodes();
+        nodes.addSensor();
+        n1 = nodes.getSensorNum();
+        REQUIRE(n1 == 1);
 
-        gnm.addNode(NodeType::SENSOR);
-        tpl = gnm.getNodeNum();
-        REQUIRE(std::get<0>(tpl) == 1);
+        nodes.addOutput();
+        n2 = nodes.getOutputNum();
+        REQUIRE(n2 == 1);
 
-        gnm.addNode(NodeType::HIDDEN);
-        tpl = gnm.getNodeNum();
-        REQUIRE(std::get<2>(tpl) == 1);
+        nodes.addNode();
+        n3 = nodes.getHiddenNum();
+        REQUIRE(n3 == 1);
     }
 
     SECTION("Add Genes") {
@@ -113,10 +117,11 @@ TEST_CASE("Genome", "[genome]") {
     SECTION("mutateAddLink") {
         Gene g1(0, 2, 0.5, 0), g2(1, 2, 0.7, 1), g3(2, 3, 0.1, 2);
 
-        gnm.addNode(NodeType::SENSOR);
-        gnm.addNode(NodeType::SENSOR);
-        gnm.addNode(NodeType::OUTPUT);
-        gnm.addNode(NodeType::HIDDEN);
+        auto& nodes = gnm.getNodes();
+        nodes.addNode();
+        nodes.addSensor();
+        nodes.addSensor();
+        nodes.addOutput();
         gnm.addGene(g1); gnm.addGene(g2); gnm.addGene(g3);
         
         Genome master = gnm;

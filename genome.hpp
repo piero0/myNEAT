@@ -7,14 +7,11 @@
 
 namespace pneat {
     using Genes = std::vector<Gene>;
-    using short3 = std::tuple<ushort, ushort, ushort>;
 
     class Genome {
         Genes genes;
         Genome* masterGenome;
-        ushort sensorNum;
-        ushort outputNum;
-        ushort hiddenNum;
+        Nodes<ushort> nodes;
         /* Maintain only a count of sensor,output and hidden nodes
             calculate indexes based on these numbers:
             Sensors: from 0 to sensNum-1
@@ -26,11 +23,10 @@ namespace pneat {
             Genome();
             void setMaster(Genome* gnm) { masterGenome = gnm; }
             Genes& getGenes() { return genes; }
+            Nodes<ushort>& getNodes() { return nodes; }
             void addGene(Gene g) { genes.push_back(g); }
-            void addNode(NodeType nt);
             void print();
             
-            short3 getNodeNum();
             void mutateWeights();
 
             void mutateAddNode();
