@@ -25,7 +25,7 @@ namespace pneat {
             Genes& getGenes() { return genes; }
             Nodes<ushort>& getNodes() { return nodes; }
             void addGene(Gene g) { genes.push_back(g); }
-            void print();
+            void print() const;
             
             void mutateWeights();
 
@@ -33,6 +33,6 @@ namespace pneat {
             void mutateAddLink();
 
             bool checkLinkExist(ushort from, ushort to);
-            ushort getNextInnov() { return genes.size(); }
+            ushort getNextInnov() const { return genes.size(); }
     };
 }

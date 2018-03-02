@@ -17,13 +17,12 @@ long Util::getTime() {
     ).time_since_epoch().count();
 }
 
-ushortDist& Util::setIntDist(ushort begin, ushort end) {
+const ushortDist& Util::setIntDist(ushort begin, ushort end) {
     udist = ushortDist(begin, end);
     return udist;
 }
 
-floatDist& Util::setFloatDist(float begin, float end) {
+const floatDist& Util::setFloatDist(float begin, float end) {
     fdist = floatDist(begin, end);
     return fdist;
 }
-

@@ -40,10 +40,12 @@ TEST_CASE("Genes", "[gene]") {
         REQUIRE(g.innovationIdx == 15);
     }
 
+    /*
     SECTION("Mutating Weights") {
         g.mutateWeight();
         REQUIRE(g.weight != 0.5);
     }
+    */
 }
 
 TEST_CASE("Genome", "[genome]") {

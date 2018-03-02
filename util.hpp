@@ -21,8 +21,8 @@ class Util {
         static Util& getRandomGen();
         static long getTime();
 
-        ushortDist& setIntDist(ushort begin, ushort end);
-        floatDist& setFloatDist(float begin, float end);
+        const ushortDist& setIntDist(ushort begin, ushort end);
+        const floatDist& setFloatDist(float begin, float end);
 
         ushort nextInt() { return udist(gen); }
         float nextFloat() { return fdist(gen); }

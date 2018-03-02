@@ -6,13 +6,13 @@ Genome::Genome() {
     masterGenome = this;
 }
 
-void Genome::print() {
+void Genome::print() const {
     std::cout << "Nodes:" << std::endl;
     std::cout << "Sensor: " << nodes.getSensorNum() 
     << " Output: " << nodes.getOutputNum()
     << " Hidden: " << nodes.getHiddenNum() << std::endl;
     std::cout << "Genes:" << std::endl;
-    for(auto& g: genes) g.print();
+    for(const auto& g: genes) g.print();
 }
 
 void Genome::mutateWeights() {

@@ -25,11 +25,11 @@ template<class T> class Nodes {
         void addOutput() { outputNum++; }
         void addNode() { hiddenNum++; }
 
-        T getSensorNum() { return sensorNum; }
-        T getOutputNum() { return outputNum; }
-        T getHiddenNum() { return hiddenNum; }
+        const T& getSensorNum() const { return sensorNum; }
+        const T& getOutputNum() const { return outputNum; }
+        const T& getHiddenNum() const { return hiddenNum; }
 
-        T getCount() { return sensorNum+outputNum+hiddenNum; }
+        const T getCount() const { return sensorNum+outputNum+hiddenNum; }
 };
 
 class Gene {
@@ -42,8 +42,7 @@ class Gene {
         bool enabled;
 
         Gene(ushort from, ushort to, float weight, ushort innov);
-        void print();
+        void print() const;
         void setInnov(ushort innov);
-        void mutateWeight();
 };
 }
