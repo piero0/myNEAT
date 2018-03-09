@@ -2,7 +2,7 @@
 CXXFLAGS = -std=c++14 -Wall 
 LDLIBS = 
 
-objs = gene.o genome.o organism.o util.o main.o 
+objs = gene.o genome.o organism.o util.o main.o
 exec = main
 
 debug: CXXFLAGS += -g -DDEBUG

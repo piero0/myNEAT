@@ -35,4 +35,17 @@ namespace pneat {
             bool checkLinkExist(ushort from, ushort to);
             ushort getNextInnov() const { return genes.size(); }
     };
+
+    class MasterGenome: public Genome {
+        //or no inheritance but composition
+        //Genome gnm; ??
+        //need some more time to design
+        //how I want to use it
+        public:
+            bool checkLinkExist();
+            ushort getNextInnov();
+            //add a gene to master and return
+            //with innov set
+            Gene& addGene(Gene& g); 
+    };
 }

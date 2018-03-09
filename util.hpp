@@ -13,6 +13,7 @@ class Util {
         ushortDist udist;
         floatDist fdist;
         Util();
+        Util(std::size_t seed);
 
     public:
         Util(Util const& u) = delete;
