@@ -1,7 +1,15 @@
 #include "genome.hpp"
 #include "organism.hpp"
+#include "species.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+
+using namespace pneat;
+
+void nextTest() {
+    Species sp;
+    MasterGenome& mg = MasterGenome::getInstance();
+}
 
 int main(int argc, char* argv[]) {
     std::ios_base::sync_with_stdio(false);

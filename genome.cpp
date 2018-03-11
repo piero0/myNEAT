@@ -89,3 +89,13 @@ bool Genome::checkLinkExist(ushort from, ushort to) {
     }
     return false;
 }
+
+MasterGenome& MasterGenome::getInstance() {
+    static MasterGenome mg;
+    return mg;
+}
+
+void MasterGenome::initFrom(Genome& gnm) {
+    this->genes = gnm.getGenes();
+    this->nodes = gnm.getNodes();
+}

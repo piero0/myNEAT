@@ -9,9 +9,10 @@ namespace pneat {
     using Genes = std::vector<Gene>;
 
     class Genome {
-        Genes genes;
-        Genome* masterGenome;
-        Nodes<ushort> nodes;
+        protected:
+            Genes genes;
+            Genome* masterGenome;
+            Nodes<ushort> nodes;
         /* Maintain only a count of sensor,output and hidden nodes
             calculate indexes based on these numbers:
             Sensors: from 0 to sensNum-1
@@ -28,12 +29,12 @@ namespace pneat {
             void print() const;
             
             void mutateWeights();
-
             void mutateAddNode();
             void mutateAddLink();
 
             bool checkLinkExist(ushort from, ushort to);
             ushort getNextInnov() const { return genes.size(); }
+            Genome crossover(Genome& gnm);
     };
 
     class MasterGenome: public Genome {
@@ -42,10 +43,12 @@ namespace pneat {
         //need some more time to design
         //how I want to use it
         public:
+            static MasterGenome& getInstance();
+            void initFrom(Genome& gnm);
             bool checkLinkExist();
             ushort getNextInnov();
             //add a gene to master and return
             //with innov set
-            Gene& addGene(Gene& g); 
+            //Gene& addGene(Gene& g); 
     };
 }
