@@ -16,7 +16,7 @@ void Genome::print() const {
 }
 
 void Genome::mutateWeights() {
-    Util& u = Util::getRandomGen();
+    Util& u = Util::getInstance();
     u.setFloatDist(-0.5, 0.5);
 
     for(auto& el: genes) el.weight += u.nextFloat();
@@ -32,7 +32,7 @@ void Genome::mutateAddNode() {
         c) add new node
     */
     //Randomly pick a link
-    Util& rnd = Util::getRandomGen();
+    Util& rnd = Util::getInstance();
     rnd.setIntDist(0, genes.size()-1);
     ushort geneIdx = 0;
      
@@ -60,7 +60,7 @@ void Genome::mutateAddNode() {
 }
 
 void Genome::mutateAddLink() {
-    Util& rnd = Util::getRandomGen();
+    Util& rnd = Util::getInstance();
     ushort fromIdx = 0, toIdx = 0,
         sensNum = nodes.getSensorNum(),
         hidNum = nodes.getHiddenNum(),

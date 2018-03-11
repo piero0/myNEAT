@@ -2,6 +2,6 @@
 
 using namespace pneat;
 
-Organism::Organism(Genome& g) {
+Organism::Organism(const Genome& g) {
     this->g = g;
 }

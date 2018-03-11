@@ -19,9 +19,13 @@ void Species::doCrossover() {
 }
 
 void Species::getOutcasts() {
-    
+
 }   
 
 void Species::calcCompatibilityDistans() {
     compabilityDistance = 0.0;
+}
+
+void Species::dump() {
+    for(auto& el: orgs) el.getGenome().print();
 }

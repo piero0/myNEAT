@@ -15,4 +15,5 @@ class Species {
         
         void addOrganism(Organism& org) { orgs.push_back(org); }
         void calcCompatibilityDistans();
+        void dump();
 };

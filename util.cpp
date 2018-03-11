@@ -10,7 +10,7 @@ Util::Util(std::size_t seed) {
     gen = std::mt19937(seed);
 }
 
-Util& Util::getRandomGen() {
+Util& Util::getInstance() {
     static Util u;
     return u;
 }

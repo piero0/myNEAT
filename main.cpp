@@ -1,14 +1,27 @@
 #include "genome.hpp"
 #include "organism.hpp"
 #include "species.hpp"
+#include "population.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
 using namespace pneat;
 
 void nextTest() {
-    Species sp;
     MasterGenome& mg = MasterGenome::getInstance();
+    Util& u = Util::getInstance();
+
+    auto configFile = "config.json";
+    auto cfg = u.parseConfig(configFile);
+
+    mg.initFrom(cfg.second);
+
+    Population pop;
+
+    pop.initPopulation(10);
+
+    pop.dump();
+
 }
 
 int main(int argc, char* argv[]) {
@@ -108,6 +121,8 @@ int main(int argc, char* argv[]) {
     // org.print();
 
     //Make a population
+
+    nextTest();
 
     return 0;
 }

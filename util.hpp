@@ -38,7 +38,7 @@ class Util {
         Util(Util const& u) = delete;
         void operator=(Util const& u) = delete;
 
-        static Util& getRandomGen();
+        static Util& getInstance();
         static long getTime();
 
         const ushortDist& setIntDist(ushort begin, ushort end);

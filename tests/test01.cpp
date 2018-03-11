@@ -154,8 +154,8 @@ TEST_CASE("Organism", "[organism]") {
 }
 
 TEST_CASE("Util", "[util]") {
-    auto& g1 = Util::getRandomGen();
-    auto& g2 = Util::getRandomGen();
+    auto& g1 = Util::getInstance();
+    auto& g2 = Util::getInstance();
     REQUIRE(&g1 == &g2);
     
     g1.setIntDist(0, 1);
