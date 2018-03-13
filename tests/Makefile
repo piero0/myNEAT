@@ -1,9 +1,10 @@
-#
 CXXFLAGS = -std=c++14 -Wall 
-LDLIBS = 
+LDLIBS = -lmyNEAT
+LDFLAGS = -L.. -Wl,-rpath=..
 
-neatLib = ../organism.o ../genome.o ../gene.o ../util.o
-objs = testMain.o test01.o 
+objs = testGene.o testGenome.o testOrganism.o\
+	 testSpecies.o testPopulation.o testUtil.o
+main = testMain.o
 exec = unitTest
 catch = catch.hpp
 
@@ -16,11 +17,14 @@ release: $(exec)
 hdr: 
 	$(CXX) $(CXXFLAGS) -c $(catch)
 
-$(exec): $(objs)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(neatLib)
+$(exec): $(main) $(objs)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-test01.o: test01.cpp $(catch)
+.PHONY: clean fullclean
 
-.PHONY: clean
 clean:
 	rm -f $(exec) $(objs)
+
+fullclean: clean
+fullclean:
+	rm -f $(main)

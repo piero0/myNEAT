@@ -42,6 +42,9 @@ namespace pneat {
         //Genome gnm; ??
         //need some more time to design
         //how I want to use it
+        MasterGenome() {}
+        MasterGenome(MasterGenome const& m) = delete;
+        void operator=(MasterGenome const& m) = delete;
         public:
             static MasterGenome& getInstance();
             void initFrom(Genome& gnm);
