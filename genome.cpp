@@ -115,9 +115,23 @@ Genome Genome::crossover(Genome& gnm) {
     //Set nodes count
     auto& nds = child.getNodes();
 
-    ushort hiddenCount = 0; //TODO
+    ushort sensAndOut = nodes.getSensorNum() + nodes.getOutputNum();
+
+    std::set<ushort> nodenums;
+
+    auto checkFunc = [&](ushort idx){
+        if(idx >= sensAndOut)
+            if(nodenums.find(idx) == nodenums.end())
+                nodenums.insert(idx);
+    };
+
+    for(auto& el: child.getGenes()) {
+        checkFunc(el.fromIdx);
+        checkFunc(el.toIdx);
+    }
+
     //sensors and outputs counts do not change in my implementation
-    nds.setup(nodes.getSensorNum(), nodes.getOutputNum(), hiddenCount);
+    nds.setup(nodes.getSensorNum(), nodes.getOutputNum(), nodenums.size());
 
     return child;
 }

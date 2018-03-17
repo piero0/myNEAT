@@ -2,6 +2,7 @@
 #include <tuple>
 #include <chrono>
 #include <algorithm>
+#include <set>
 #include "gene.hpp"
 #include "util.hpp"
 
