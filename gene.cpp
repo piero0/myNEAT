@@ -13,7 +13,3 @@ Gene::Gene(ushort from, ushort to, float weight, ushort innov) {
 void Gene::print() const {
     std::cout << innovationIdx << " " << fromIdx << "-" << toIdx << " " << weight << std::endl;
 }
-
-void Gene::setInnov(ushort innov) {
-    this->innovationIdx = innov;
-}

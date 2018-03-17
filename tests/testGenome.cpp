@@ -9,6 +9,10 @@ TEST_CASE("Genome", "[genome]") {
     auto& g = gnm.getGenes();
     REQUIRE(g.size() == 0);
 
+    SECTION("Check Nodes Count is 0") {
+        REQUIRE(gnm.getNodes().getCount() == 0);
+    }
+
     SECTION("Add Genes") {
         Gene g1(1,2,0.5,0), g2(2,3,0.7,1), g3(3,4,0.1,2);
         gnm.addGene(g1);
@@ -38,15 +42,6 @@ TEST_CASE("Genome", "[genome]") {
         }
     }
 
-    SECTION("Check link exist") {
-        Gene g1(1,2,0.5,0), g2(2,3,0.7,1), g3(3,4,0.1,2);
-        gnm.addGene(g1);
-        gnm.addGene(g2);
-        gnm.addGene(g3);
-        REQUIRE(gnm.checkLinkExist(3,4) == true);
-        REQUIRE(gnm.checkLinkExist(4,5) == false);
-    }
-
     SECTION("mutateAddLink") {
         Gene g1(0, 2, 0.5, 0), g2(1, 2, 0.7, 1), g3(2, 3, 0.1, 2);
 
@@ -59,11 +54,9 @@ TEST_CASE("Genome", "[genome]") {
         
         Genome master = gnm;
 
-        gnm.setMaster(&master);
         gnm.mutateAddLink();
 
         Gene mut = gnm.getGenes()[3];
-        REQUIRE(gnm.getNextInnov() == 4);
         REQUIRE(mut.fromIdx != 2);
         REQUIRE(mut.toIdx > 1);
     }
@@ -71,7 +64,35 @@ TEST_CASE("Genome", "[genome]") {
 
 TEST_CASE("MasterGenome", "[mastergenome]") {
     MasterGenome& mg = MasterGenome::getInstance();
-    SECTION("init from Genome") {
-        REQUIRE(1 == 0);
+    Genome gnm;
+    Gene g1(1,2,0.5,0), g2(2,3,0.7,1), g3(3,4,0.1,2);
+    gnm.addGene(g1);
+    gnm.addGene(g2);
+    gnm.addGene(g3);
+
+    REQUIRE(gnm.getNodes().getCount() == 0);
+
+    auto& n = gnm.getNodes();
+
+    SECTION("Add nodes") {
+        n.addNode();
+        n.addNode();
+        n.addNode();
+
+        REQUIRE(gnm.getNodes().getCount() == 3);
+
+        SECTION("init from Genome") {
+            mg.initFromGenome(gnm);
+            auto& nds = mg.getNodes();
+            
+            REQUIRE(gnm.getNodes().getCount() == 3);
+            REQUIRE(gnm.getGenes().size() == mg.getGenes().size());
+            REQUIRE((gnm.getNodes().getCount()) == (mg.getNodes().getCount()));
+
+            SECTION("Check link exist") {
+                REQUIRE(mg.checkLinkExist(3,4) == true);
+                REQUIRE(mg.checkLinkExist(4,5) == false);
+            }
+        }
     }
 }

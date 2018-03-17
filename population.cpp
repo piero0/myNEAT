@@ -8,7 +8,7 @@ Population::Population():
 }
 
 void Population::initPopulation(ushort size, Genome& baseGenome) {
-    masterGenome.initFrom(baseGenome);
+    masterGenome.initFromGenome(baseGenome);
     Species sp; 
     //Genome g = dynamic_cast<Genome&>(masterGenome);
     for(int a=0; a<size; a++) {

@@ -11,7 +11,6 @@ namespace pneat {
     class Genome {
         protected:
             Genes genes;
-            Genome* masterGenome;
             Nodes<ushort> nodes;
         /* Maintain only a count of sensor,output and hidden nodes
             calculate indexes based on these numbers:
@@ -22,34 +21,35 @@ namespace pneat {
 
         public:
             Genome();
-            void setMaster(Genome* gnm) { masterGenome = gnm; }
             Genes& getGenes() { return genes; }
             Nodes<ushort>& getNodes() { return nodes; }
+
             void addGene(Gene g) { genes.push_back(g); }
+            void addNode() { nodes.addNode(); }
+            ushort getNodesCount() { return nodes.getCount(); }
+
+            void addLinkedNode(Gene& from, Gene& to) {
+                addNode(); addGene(from); addGene(to);
+            }
+
             void print() const;
             
             void mutateWeights();
             void mutateAddNode();
             void mutateAddLink();
 
-            bool checkLinkExist(ushort from, ushort to);
-            ushort getNextInnov() const { return genes.size(); }
             Genome crossover(Genome& gnm);
     };
 
     class MasterGenome: public Genome {
-        //or no inheritance but composition
-        //Genome gnm; ??
-        //need some more time to design
-        //how I want to use it
         MasterGenome() {}
         MasterGenome(MasterGenome const& m) = delete;
         void operator=(MasterGenome const& m) = delete;
         public:
             static MasterGenome& getInstance();
-            void initFrom(Genome& gnm);
-            bool checkLinkExist();
-            ushort getNextInnov();
+            void initFromGenome(Genome& gnm);
+            bool checkLinkExist(ushort from, ushort to);
+            ushort getNextInnovation() { return genes.size()+1; }
             //add a gene to master and return
             //with innov set
             //Gene& addGene(Gene& g); 

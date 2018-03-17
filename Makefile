@@ -2,7 +2,7 @@ CXXFLAGS = -std=c++14 -Wall
 LDLIBS = 
 
 main = main.o
-objs = util.o gene.o genome.o organism.o species.o population.o
+objs = gene.o util.o genome.o organism.o species.o population.o
  
 exec = main
 dynlib = libmyNEAT.so

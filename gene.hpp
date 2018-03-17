@@ -21,6 +21,20 @@ template<class T> class Nodes {
 
     public:
         Nodes() { sensorNum=0; outputNum=0; hiddenNum=0; }
+        Nodes<T>& operator=(Nodes<T> const& nds) {
+            sensorNum = nds.getSensorNum(); 
+            outputNum = nds.getOutputNum(); 
+            hiddenNum = nds.getHiddenNum();
+
+            return *this;
+        }
+
+        void setup(T sens, T out, T hidd) {
+            sensorNum = sens;
+            outputNum = out;
+            hiddenNum = hidd;
+        }
+
         void addSensor() { sensorNum++; }
         void addOutput() { outputNum++; }
         void addNode() { hiddenNum++; }
@@ -43,6 +57,5 @@ class Gene {
 
         Gene(ushort from, ushort to, float weight, ushort innov);
         void print() const;
-        void setInnov(ushort innov);
 };
 }

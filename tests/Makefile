@@ -1,4 +1,4 @@
-CXXFLAGS = -std=c++14 -Wall 
+CXXFLAGS = -std=c++14 -O2 -Wall -Winvalid-pch
 LDLIBS = -lmyNEAT
 LDFLAGS = -L.. -Wl,-rpath=..
 
@@ -8,10 +8,6 @@ main = testMain.o
 exec = unitTest
 catch = catch.hpp
 
-debug: CXXFLAGS += -g -DDEBUG
-debug: $(exec)
-
-release: CXXFLAGS += -O2
 release: $(exec)
 
 hdr: 

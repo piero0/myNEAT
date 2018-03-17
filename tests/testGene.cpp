@@ -12,12 +12,6 @@ TEST_CASE("Genes", "[gene]") {
     
     REQUIRE(g.enabled == true);
     REQUIRE(g.innovationIdx == 0);
-
-    //prbl to be removed
-    SECTION("Set innovation") {
-        g.setInnov(15);
-        REQUIRE(g.innovationIdx == 15);
-    }
 }
 
 TEST_CASE("Nodes", "[nodes]") {
