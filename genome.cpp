@@ -87,7 +87,7 @@ void Genome::mutateAddLink() {
 
 Genome Genome::crossover(Genome& gnm) {
     auto& utl = Util::getInstance();
-    utl.setFloatDist(0.0, 1.0);
+    utl.setFloatDist(1.0, 2.0);
 
     Genome child;
 
@@ -110,7 +110,7 @@ Genome Genome::crossover(Genome& gnm) {
 
     //add excess genes (if any, at least one iterator is already at end())
     for(;pit1 != genes.end(); pit1++) child.addGene(*pit1);
-    for(;pit2 != genes.end(); pit2++) child.addGene(*pit2);
+    for(;pit2 != Par2Genes.end(); pit2++) child.addGene(*pit2);
 
     //Set nodes count
     auto& nds = child.getNodes();

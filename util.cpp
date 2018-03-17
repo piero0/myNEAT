@@ -7,11 +7,12 @@ Util::Util() {
 }
 
 Util::Util(std::size_t seed) {
+    if(seed == 0) seed = Util::getTime();
     gen = std::mt19937(seed);
 }
 
-Util& Util::getInstance() {
-    static Util u;
+Util& Util::getInstance(std::size_t seed) {
+    static Util u(seed);
     return u;
 }
 

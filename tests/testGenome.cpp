@@ -4,6 +4,7 @@
 using namespace pneat;
 
 TEST_CASE("Genome", "[genome]") {
+    auto& rnd = Util::getInstance(1234); //make sure we mutate the same way for each test
     Genome gnm;
 
     auto& g = gnm.getGenes();
@@ -59,6 +60,79 @@ TEST_CASE("Genome", "[genome]") {
         Gene mut = gnm.getGenes()[3];
         REQUIRE(mut.fromIdx != 2);
         REQUIRE(mut.toIdx > 1);
+    }
+
+    SECTION("mutateAddNode") {
+        Gene g1(0, 2, 0.5, 0), g2(1, 2, 0.7, 1), g3(2, 3, 0.1, 2);
+        Genome gnm1;
+
+        gnm1.addGene(g1);
+        gnm1.addGene(g2);
+        gnm1.addGene(g3);
+
+        gnm1.getNodes().setup(2, 1, 0);
+
+        ushort nodet0 = gnm1.getNodesCount();
+
+        gnm1.mutateAddNode();
+
+        auto& genes = gnm1.getGenes();
+        Gene& g4 = genes[genes.size()-2],
+        &g5 = genes[genes.size()-1];
+        ushort nodet1 = gnm1.getNodesCount();
+
+        REQUIRE(nodet0 != nodet1);
+        REQUIRE(g4.fromIdx == 2);
+        REQUIRE(g4.toIdx == 4);
+        REQUIRE(g5.fromIdx == 4);
+        REQUIRE(g5.toIdx == 3);
+    }
+
+    SECTION("crossover") {
+        auto& mg = MasterGenome::getInstance();
+        std::array<Gene, 9> gar = {
+            Gene(0, 2, 0.5, 0), 
+            Gene(1, 2, 0.7, 1), 
+            Gene(2, 3, 0.1, 2),
+            Gene(2, 4, 0.1, 3),
+            Gene(4, 3, 0.1, 4),
+            Gene(1, 3, 0.1, 5),
+            //same like first 3 but with weight += 0.1
+            //to check random peek of matching genes
+            Gene(0, 2, 0.6, 0), 
+            Gene(1, 2, 0.8, 1), 
+            Gene(2, 3, 0.2, 2)
+        };
+
+        Genome gnm1, gnm2;
+
+        Genes& gns = mg.getGenes();
+        //gns.insert(gns.end(), gar.begin(), gar.end());
+
+        for(auto& el: gar) {
+            mg.addGene(el);
+        }
+
+        mg.getNodes().setup(2, 1, 2);
+        gnm1.getNodes().setup(2, 1, 2);
+        gnm2.getNodes().setup(2, 1, 2);
+
+        gnm1.addGene(gar[6]);
+        gnm1.addGene(gar[7]);
+        gnm1.addGene(gar[8]);
+        gnm1.addGene(gar[5]);
+        
+        gnm2.addGene(gar[0]);
+        gnm2.addGene(gar[1]);
+        gnm2.addGene(gar[2]);
+        gnm2.addGene(gar[3]);
+        gnm2.addGene(gar[4]);
+
+        Genome child = gnm1.crossover(gnm2);
+
+        child.print();
+
+        REQUIRE(1 == 0);
     }
 }
 
