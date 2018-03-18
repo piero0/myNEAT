@@ -73,7 +73,7 @@ Genome Util::json2Genome() {
     ptree::key_type key = "genome.genes.";
     ushort idx = 0;
     for(auto& el: pt.get_child(key)) {
-        auto it = pt.get_child(key+el.first).begin();
+        auto it = el.second.begin();
         ushort from = (it++)->second.get_value<ushort>();
         ushort to = (it++)->second.get_value<ushort>();
         float wg = it->second.get_value<float>();
