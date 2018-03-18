@@ -10,5 +10,6 @@ namespace pneat {
             Population();
             void initPopulation(ushort size, Genome& baseGenome);
             void dump();
+            void testLoop();
     };
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "organism.hpp"
+#include "util.hpp"
 
 namespace pneat {
     class Species {
@@ -9,7 +10,7 @@ namespace pneat {
 
         public:
             Species();
-            void updateFitness(Organism& organism);
+            void updateFitness();
             void doCrossover();
             void getOutcasts();
             

@@ -22,6 +22,8 @@ namespace pneat {
                 return normFitness; 
             }
 
+            void dump();
+
             static float adder(const float& sum, const Organism& org) {
                 return sum + org.fitness;
             }

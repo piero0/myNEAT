@@ -11,6 +11,10 @@ void Test() {
     Population pop;
     pop.initPopulation(cfg.first.population, cfg.second);
     pop.dump();
+
+    pop.testLoop();
+
+    pop.dump();
 }
 
 int main(int argc, char* argv[]) {

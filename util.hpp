@@ -45,7 +45,11 @@ class Util {
         const floatDist& setFloatDist(float begin, float end);
 
         ushort nextInt() { return udist(gen); }
-        float nextFloat() { return fdist(gen); }
+        float nextFloat() { 
+            //std::cout << fdist.a() << " : " << fdist.b() << std::endl;
+            //std::cout << fdist.min() << " : " << fdist.max() << std::endl;
+            return fdist(gen); 
+        }
 
         std::pair<Config, Genome> parseConfig(std::string filename);
 };

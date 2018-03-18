@@ -1,6 +1,6 @@
 {
     "config": {
-        "population": 150
+        "population": 4
     },
     "genome": {
         "sensors": 2,

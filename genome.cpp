@@ -6,6 +6,7 @@ Genome::Genome() {
 }
 
 void Genome::print() const {
+    std::cout << "Genome" << std::endl;
     std::cout << "Nodes:" << std::endl;
     std::cout << "Sensor: " << nodes.getSensorNum() 
     << " Output: " << nodes.getOutputNum()
@@ -55,7 +56,7 @@ void Genome::mutateAddNode() {
 
     //Create new links
     Gene newFrom = Gene(g.fromIdx, newNodeIdx, g.weight, masterGenome.getNextInnovation());
-    Gene newTo = Gene(newNodeIdx, g.toIdx, 1.0f, masterGenome.getNextInnovation());
+    Gene newTo = Gene(newNodeIdx, g.toIdx, 1.0f, masterGenome.getNextInnovation()+1);
 
     this->addLinkedNode(newFrom, newTo);
     masterGenome.addLinkedNode(newFrom, newTo);
@@ -87,7 +88,7 @@ void Genome::mutateAddLink() {
 
 Genome Genome::crossover(Genome& gnm) {
     auto& utl = Util::getInstance();
-    utl.setFloatDist(1.0, 2.0);
+    utl.setFloatDist(0.0, 1.0);
 
     Genome child;
 
