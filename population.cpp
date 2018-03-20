@@ -19,10 +19,8 @@ void Population::initPopulation(ushort size, Genome& baseGenome) {
     species.push_back(sp);
 }
 
-void Population::testLoop() {
+void Population::testLoop(std::size_t iterNum) {
     auto& sp = species[0];
-
-    std::size_t iterNum = 10;
 
     for(std::size_t a=0; a<iterNum; a++) {
         std::cout << "Epoch: " << a << std::endl;

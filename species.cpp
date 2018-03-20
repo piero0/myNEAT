@@ -9,11 +9,15 @@ Species::Species() {
 void Species::updateFitness() {
     //fake update
     auto& utl = Util::getInstance();
-    utl.setFloatDist(-0.1, 0.1);
+    auto gen = utl.getFRndGen(-0.1, 0.1);
+
+    float fit, rnd;
 
     for(auto it = orgs.begin(); it != orgs.end(); it++) {
-        float fit = it->getFitness();
-        it->setFitness(fit + utl.nextFloat());
+        fit = it->getFitness();
+        rnd = gen.next();
+        if(fit + rnd < 0.0) fit = 0.0;
+        it->setFitness(fit + rnd);
     }
 }
 
@@ -28,9 +32,12 @@ void Species::prepareFitness() {
 }
 
 Organism& Species::randomPick(float probability) {
+    // p < 0 -> return 1st
+    // p > 1 -> return last
     auto it = std::lower_bound(orgs.begin(), orgs.end(), probability, Organism::compareThresh);
     if(it == orgs.end()) {
         std::cerr << "randomPick returned END: " << probability << std::endl;
+        it--;
     }
     return *it;
 }
@@ -52,13 +59,13 @@ void Species::doCrossover() {
 
     this->prepareFitness();
 
-    auto& dist = utl.setFloatDist(0.0, 1.0);
+    auto gen = utl.getFRndGen(0.0, 1.0);
     //std::cout << dist.a() << " : " << dist.b() << std::endl;
     //std::cout << dist.min() << " : " << dist.max() << std::endl;
 
     for(std::size_t a=0; a<orgs.size(); a++) {
-        auto& p1org = this->randomPick(utl.nextFloat());
-        auto& p2org = this->randomPick(utl.nextFloat());
+        auto& p1org = this->randomPick(gen.next());
+        auto& p2org = this->randomPick(gen.next());
 
         float f1 = p1org.getFitness();
         float f2 = p2org.getFitness();
@@ -68,9 +75,9 @@ void Species::doCrossover() {
 
         Genome child = parent1.crossover(parent2);
 
-        if(utl.nextFloat() < ADD_NODE_THRESH) child.mutateAddNode();
-        if(utl.nextFloat() < ADD_LINK_THRESH) child.mutateAddLink();
-        if(utl.nextFloat() < MUTATE_WEIGHTS_THRESH) child.mutateWeights();
+        if(gen.next() < ADD_NODE_THRESH) child.mutateAddNode();
+        if(gen.next() < ADD_LINK_THRESH) child.mutateAddLink();
+        if(gen.next() < MUTATE_WEIGHTS_THRESH) child.mutateWeights();
 
         auto org = Organism(child);
         org.setFitness((f1 > f2) ? f1 : f2);

@@ -2,7 +2,7 @@
 
 using namespace pneat;
 
-void Test() {
+void Test(std::size_t iterNum) {
     Util& u = Util::getInstance();
 
     auto configFile = "config.json";
@@ -12,12 +12,14 @@ void Test() {
     pop.initPopulation(cfg.first.population, cfg.second);
     pop.dump();
 
-    pop.testLoop();
+    pop.testLoop(iterNum);
 
     pop.dump();
 }
 
 int main(int argc, char* argv[]) {
-    Test();
+    std::size_t iterNum = 10;
+    if(argc > 1) iterNum = std::atoi(argv[1]);
+    Test(iterNum);
     return 0;
 }

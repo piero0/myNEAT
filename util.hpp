@@ -20,6 +20,20 @@ struct Config {
     ushort population;
 };
 
+template<class outT, class distT> class Rnd {
+    std::mt19937& gen;
+    distT dist;
+
+    public:
+        Rnd(std::mt19937& genref, outT start, outT end):
+            gen(genref) {
+            dist = distT(start, end);
+            std::cout << "My: " << &gen << " Passed: " << &genref << std::endl;
+        }
+
+        outT next() { return dist(gen); }
+};
+
 class Util {
     private:
         std::mt19937 gen;
@@ -50,6 +64,9 @@ class Util {
             //std::cout << fdist.min() << " : " << fdist.max() << std::endl;
             return fdist(gen); 
         }
+
+        Rnd<ushort, ushortDist> getSRndGen(ushort begin, ushort end) { return Rnd<ushort, ushortDist>(gen, begin, end); }
+        Rnd<float, floatDist> getFRndGen(float begin, float end) { return Rnd<float, floatDist>(gen, begin, end); }
 
         std::pair<Config, Genome> parseConfig(std::string filename);
 };

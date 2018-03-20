@@ -37,4 +37,19 @@ TEST_CASE("Util", "[util]") {
         REQUIRE(resp.first.population == 150);
         REQUIRE(resp.second.getGenes().size() == 5);
     }
+
+    SECTION("new Rnd") {
+        std::mt19937 gen(1234);
+        MyRnd r(gen, 0.0, 1.0);
+        MyRnd r2(gen, 2.0, 3.0);
+        float w, w2;
+
+        for(int a=0; a<100; a++) {
+            w = r.nextFloat();
+            w2 = r2.nextFloat();
+            REQUIRE((w >= 0.0 && w <= 1.0));
+            REQUIRE((w2 >= 2.0 && w2 <= 3.0));
+        }
+        
+    }
 }
