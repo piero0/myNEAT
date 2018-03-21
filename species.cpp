@@ -19,7 +19,7 @@ void Species::updateFitness() {
         it->setFitness(fit + rnd);
     }
 }
-
+ 
 void Species::prepareFitness() {
     //clamp fitness to  0.0-1.0 range
     totalFitness = std::accumulate(orgs.begin(), orgs.end(), 0.0, Organism::adder);
@@ -29,7 +29,7 @@ void Species::prepareFitness() {
         lastThresh += (*it).setThresh(lastThresh, totalFitness);
     }
 }
-
+  
 Organism& Species::randomPick(float probability) {
     // p < 0 -> return 1st
     // p > 1 -> return last
@@ -82,7 +82,7 @@ void Species::doCrossover() {
         f1 = p1org.getFitness();
         f2 = p2org.getFitness();
         org.setFitness((f1 > f2) ? f1 : f2);
-        
+
         newOrgs.push_back(org);
     }
 

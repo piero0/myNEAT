@@ -34,4 +34,6 @@ void Population::dump() {
     for(auto& el: species) {
         el.dump();
     }
+
+    species[0].getOrganisms()[0].dumpGraph("test");
 }

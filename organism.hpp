@@ -23,6 +23,7 @@ namespace pneat {
             }
 
             void dump();
+            void dumpGraph(std::string name);
 
             static float adder(const float& sum, const Organism& org) {
                 return sum + org.fitness;
