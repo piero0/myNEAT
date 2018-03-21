@@ -37,8 +37,6 @@ template<class outT, class distT> class Rnd {
 class Util {
     private:
         std::mt19937 gen;
-        ushortDist udist;
-        floatDist fdist;
         ptree pt;
 
         Util();
@@ -54,16 +52,6 @@ class Util {
 
         static Util& getInstance(std::size_t seed = 0);
         static long getTime();
-
-        const ushortDist& setIntDist(ushort begin, ushort end);
-        const floatDist& setFloatDist(float begin, float end);
-
-        ushort nextInt() { return udist(gen); }
-        float nextFloat() { 
-            //std::cout << fdist.a() << " : " << fdist.b() << std::endl;
-            //std::cout << fdist.min() << " : " << fdist.max() << std::endl;
-            return fdist(gen); 
-        }
 
         Rnd<ushort, ushortDist> getSRndGen(ushort begin, ushort end) { return Rnd<ushort, ushortDist>(gen, begin, end); }
         Rnd<float, floatDist> getFRndGen(float begin, float end) { return Rnd<float, floatDist>(gen, begin, end); }

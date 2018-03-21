@@ -43,16 +43,15 @@ namespace pneat {
     };
 
     class MasterGenome: public Genome {
-        MasterGenome() {}
-        MasterGenome(MasterGenome const& m) = delete;
-        void operator=(MasterGenome const& m) = delete;
+            std::set<Gene> genesSet;
+            MasterGenome() {}
+            MasterGenome(MasterGenome const& m) = delete;
+            void operator=(MasterGenome const& m) = delete;
         public:
             static MasterGenome& getInstance();
             void initFromGenome(Genome& gnm);
             bool checkLinkExist(ushort from, ushort to);
             ushort getNextInnovation() { return genes.size()+1; }
-            //add a gene to master and return
-            //with innov set
-            //Gene& addGene(Gene& g); 
+            void addGene(Gene& g) { genes.push_back(g); genesSet.insert(g); }
     };
 }

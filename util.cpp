@@ -22,16 +22,6 @@ long Util::getTime() {
     ).count();
 }
 
-const ushortDist& Util::setIntDist(ushort begin, ushort end) {
-    udist = ushortDist(begin, end);
-    return udist;
-}
-
-const floatDist& Util::setFloatDist(float begin, float end) {
-    fdist = floatDist(begin, end);
-    return fdist;
-}
-
 bool Util::openJson(std::string filename) {
     bool loaded = false;
     try {

@@ -8,8 +8,7 @@ Species::Species() {
 
 void Species::updateFitness() {
     //fake update
-    auto& utl = Util::getInstance();
-    auto gen = utl.getFRndGen(-0.1, 0.1);
+    auto gen = Util::getInstance().getFRndGen(-0.1, 0.1);
 
     float fit, rnd;
 
@@ -63,12 +62,11 @@ void Species::doCrossover() {
     //std::cout << dist.a() << " : " << dist.b() << std::endl;
     //std::cout << dist.min() << " : " << dist.max() << std::endl;
 
+    float f1,f2;
+
     for(std::size_t a=0; a<orgs.size(); a++) {
         auto& p1org = this->randomPick(gen.next());
         auto& p2org = this->randomPick(gen.next());
-
-        float f1 = p1org.getFitness();
-        float f2 = p2org.getFitness();
 
         auto& parent1 = p1org.getGenome();
         auto& parent2 = p2org.getGenome();
@@ -80,7 +78,11 @@ void Species::doCrossover() {
         if(gen.next() < MUTATE_WEIGHTS_THRESH) child.mutateWeights();
 
         auto org = Organism(child);
+
+        f1 = p1org.getFitness();
+        f2 = p2org.getFitness();
         org.setFitness((f1 > f2) ? f1 : f2);
+        
         newOrgs.push_back(org);
     }
 

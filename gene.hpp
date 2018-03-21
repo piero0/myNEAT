@@ -57,5 +57,11 @@ class Gene {
 
         Gene(ushort from, ushort to, float weight, ushort innov);
         void print() const;
+
+        friend bool operator<(const Gene& g1, const Gene& g2) { 
+            if(g1.fromIdx < g2.fromIdx) { return true; }
+            else if(g1.fromIdx == g2.fromIdx && g1.toIdx < g2.toIdx) { return true; }
+            return false;
+        }
 };
 }

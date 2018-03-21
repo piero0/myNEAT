@@ -158,14 +158,13 @@ MasterGenome& MasterGenome::getInstance() {
 
 bool MasterGenome::checkLinkExist(ushort from, ushort to) {
     std::cout << "checkLinkExist: " << from << " " << to << std::endl;
-    //naive version (O(n)*orgNum)
-    for(auto& g: genes) {
-        if(g.fromIdx == from && g.toIdx == to) return true;
-    }
+    //O(log n)
+    if(genesSet.find(Gene(from, to, 0.0, 0)) != genesSet.end()) return true;
     return false;
 }
 
 void MasterGenome::initFromGenome(Genome& gnm) {
     this->genes = gnm.getGenes();
     this->nodes = gnm.getNodes();
+    for(auto& el: genes) genesSet.insert(el);
 }
