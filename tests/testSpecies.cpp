@@ -4,7 +4,8 @@
 using namespace pneat;
 
 TEST_CASE("Species", "[species]") {
-    Species spc;
+    Config cfg;
+    Species spc(&cfg);
     Genome gnm1;
 
     Organism o1(gnm1), o2(gnm1), o3(gnm1); 

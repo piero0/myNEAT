@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "../util.hpp"
+#include "../genome.hpp"
 
 using namespace pneat;
 

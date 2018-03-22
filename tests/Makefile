@@ -1,5 +1,5 @@
 CXXFLAGS = -std=c++14 -O2 -Wall -Winvalid-pch
-LDLIBS = -lmyNEAT
+LDLIBS = -lmyNEAT -lpthread
 LDFLAGS = -L.. -Wl,-rpath=..
 
 objs = testGene.o testGenome.o testOrganism.o\

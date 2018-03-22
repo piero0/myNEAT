@@ -5,11 +5,13 @@
 namespace pneat {
     class Species {
         std::vector<Organism> orgs;
+        Config* cfg;
+
         float compabilityDistance,
             totalFitness;
 
         public:
-            Species();
+            Species(Config* cfg);
             void updateFitness();
             void doCrossover();
             void getOutcasts();

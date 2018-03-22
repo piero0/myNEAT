@@ -9,15 +9,16 @@ Organism::Organism(const Genome& g) {
 }
 
 void Organism::dump() {
-    std::cout << "Organism" << std::endl;
-    std::cout << "Fitness: " << fitness << std::endl;
+    Log::get()->debug("--Start Organism--");
+    Log::get()->debug("Fitness: {0}", fitness);
     g.print();
+    Log::get()->debug("--End Organism--");
 }
 
 void Organism::dumpGraph(std::string name) {
     std::ofstream of(name + ".gv", std::ios_base::out);
 
-    of << "digraph " << name << "{" << std::endl;
+    of << "digraph " << "name" << "{" << std::endl;
     of << "rankdir=BT" << std::endl;
     of << "{rank=source;";
 

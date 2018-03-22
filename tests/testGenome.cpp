@@ -4,6 +4,7 @@
 using namespace pneat;
 
 TEST_CASE("Genome", "[genome]") {
+    Log::initLog();
     auto& rnd = Util::getInstance(1234); //make sure we mutate the same way for each test
     Genome gnm;
 
@@ -17,7 +18,7 @@ TEST_CASE("Genome", "[genome]") {
     SECTION("Add Genes") {
         Gene g1(1,2,0.5,0), g2(2,3,0.7,1), g3(3,4,0.1,2);
         gnm.addGene(g1);
-        gnm.addGene(g2);
+        gnm.addGene(g2); 
         gnm.addGene(g3);
         REQUIRE(gnm.getGenes().size() == 3);
         
@@ -44,6 +45,8 @@ TEST_CASE("Genome", "[genome]") {
     }
 
     SECTION("mutateAddLink") {
+        Config cfg;
+        cfg.AddLinkMaxTries = 5;
         Gene g1(0, 2, 0.5, 0), g2(1, 2, 0.7, 1), g3(2, 3, 0.1, 2);
 
         auto& nodes = gnm.getNodes();
@@ -55,7 +58,7 @@ TEST_CASE("Genome", "[genome]") {
         
         Genome master = gnm;
 
-        gnm.mutateAddLink();
+        gnm.mutateAddLink(&cfg);
 
         Gene mut = gnm.getGenes()[3];
         REQUIRE(mut.fromIdx != 2);

@@ -1,4 +1,5 @@
 #include "gene.hpp"
+#include "util.hpp"
 
 using namespace pneat;
 
@@ -11,5 +12,5 @@ Gene::Gene(ushort from, ushort to, float weight, ushort innov) {
 }
 
 void Gene::print() const {
-    std::cout << innovationIdx << " " << fromIdx << "-" << toIdx << " " << weight << std::endl;
+    Log::get()->trace("{0} {1}-{2} {3}", innovationIdx, fromIdx, toIdx, weight);
 }

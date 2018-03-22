@@ -1,5 +1,5 @@
 CXXFLAGS = -std=c++14 -Wall
-LDLIBS = 
+LDLIBS = -lpthread
 
 main = main.o
 objs = gene.o util.o genome.o organism.o species.o population.o
@@ -24,10 +24,10 @@ sharedobjs: $(objs) sharedlib
 sharedlib: $(dynlib)
 
 $(dynlib): $(objs)
-	$(CXX) $(CXXFLAGS) -shared -o $@ $^
+	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
 $(exec): $(objs) $(main)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS)
 
 main.o: genome.hpp util.hpp
 gene.o: gene.cpp gene.hpp

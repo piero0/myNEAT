@@ -35,9 +35,15 @@ namespace pneat {
 
             void print() const;
             
+            std::string printGenes() {
+                std::string txt = "|";
+                for(auto& el: genes) txt += std::to_string(el.innovationIdx) + "|";
+                return txt;
+            }
+            
             void mutateWeights();
             void mutateAddNode();
-            void mutateAddLink();
+            void mutateAddLink(Config* cfg);
 
             Genome crossover(Genome& gnm);
     };

@@ -2,8 +2,9 @@
 
 using namespace pneat;
 
-Species::Species() {
+Species::Species(Config* cfg) {
     totalFitness = 0.0;
+    this->cfg = cfg;
 }
 
 void Species::updateFitness() {
@@ -35,23 +36,20 @@ Organism& Species::randomPick(float probability) {
     // p > 1 -> return last
     auto it = std::lower_bound(orgs.begin(), orgs.end(), probability, Organism::compareThresh);
     if(it == orgs.end()) {
-        std::cerr << "randomPick returned END: " << probability << std::endl;
+        Log::get()->warn("randomPick returned END: {0}", probability);
         it--;
     }
     return *it;
 }
 
 void Species::doCrossover() {
+    Log::get()->debug("Species::doCrossover");
     /*
         0. prepare a probability list for crossover
         1. pick pairs
         2. do the crossover
         3. mutate outcomes
     */
-    const float ADD_NODE_THRESH = 0.03;
-    const float ADD_LINK_THRESH = 0.05;
-    const float MUTATE_WEIGHTS_THRESH = 0.10;
-
     std::vector<Organism> newOrgs;
 
     auto& utl = Util::getInstance();
@@ -65,17 +63,25 @@ void Species::doCrossover() {
     float f1,f2;
 
     for(std::size_t a=0; a<orgs.size(); a++) {
+        Log::get()->debug("New Child");
         auto& p1org = this->randomPick(gen.next());
         auto& p2org = this->randomPick(gen.next());
 
         auto& parent1 = p1org.getGenome();
         auto& parent2 = p2org.getGenome();
 
+        Log::get()->debug("Parent1: {0}", parent1.printGenes());
+        Log::get()->debug("Parent2: {0}", parent2.printGenes());
+
         Genome child = parent1.crossover(parent2);
 
-        if(gen.next() < ADD_NODE_THRESH) child.mutateAddNode();
-        if(gen.next() < ADD_LINK_THRESH) child.mutateAddLink();
-        if(gen.next() < MUTATE_WEIGHTS_THRESH) child.mutateWeights();
+        Log::get()->debug("Child:   {0}", child.printGenes());
+
+        if(gen.next() < cfg->AddNodeChance) child.mutateAddNode();
+        if(gen.next() < cfg->AddLinkChance) child.mutateAddLink(cfg);
+        if(gen.next() < cfg->MutateWeightsChance) child.mutateWeights();
+
+        Log::get()->debug("ChildMT: {0}", child.printGenes());
 
         auto org = Organism(child);
 

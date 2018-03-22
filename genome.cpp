@@ -6,17 +6,18 @@ Genome::Genome() {
 }
 
 void Genome::print() const {
-    std::cout << "Genome" << std::endl;
-    std::cout << "Nodes:" << std::endl;
-    std::cout << "Sensor: " << nodes.getSensorNum() 
-    << " Output: " << nodes.getOutputNum()
-    << " Hidden: " << nodes.getHiddenNum() << std::endl;
-    std::cout << "Genes:" << std::endl;
+    Log::get()->debug("--Start Genome--");
+    Log::get()->debug("Nodes: In: {0} Out: {1} Hid: {2}", 
+        nodes.getSensorNum(), nodes.getOutputNum(), nodes.getHiddenNum()
+    );
+    Log::get()->trace("Genes:");
     for(const auto& g: genes) g.print();
+    Log::get()->debug("--End Genome--");
 }
 
 void Genome::mutateWeights() {
-    std::cout << "mutateWeights" << std::endl;
+    Log::get()->trace("Genome::mutateWeights");
+
     Util& u = Util::getInstance();
     auto gen = u.getFRndGen(-0.5, 0.5);
 
@@ -24,7 +25,7 @@ void Genome::mutateWeights() {
 }
 
 void Genome::mutateAddNode() {
-    std::cout << "mutateAddNode" << std::endl;
+    Log::get()->debug("Genome::mutateAddNode");
     MasterGenome& masterGenome = MasterGenome::getInstance();
     /*
     1) pick a link
@@ -64,8 +65,8 @@ void Genome::mutateAddNode() {
     masterGenome.addLinkedNode(newFrom, newTo);
 }
 
-void Genome::mutateAddLink() {
-    std::cout << "mutateAddLink" << std::endl;
+void Genome::mutateAddLink(Config* cfg) {
+    Log::get()->debug("Genome::mutateAddLink");
     Util& rnd = Util::getInstance();
     MasterGenome& masterGenome = MasterGenome::getInstance();
     ushort fromIdx = 0, toIdx = 0,
@@ -73,7 +74,6 @@ void Genome::mutateAddLink() {
         hidNum = nodes.getHiddenNum(),
         outNum = nodes.getOutputNum(),
         cnt = 0;
-    const ushort tryLimit = 5;
 
     auto gen1 = rnd.getSRndGen(0, sensNum+hidNum-1);
     auto gen2 = rnd.getSRndGen(0, outNum+hidNum-1);
@@ -86,21 +86,21 @@ void Genome::mutateAddLink() {
         toIdx = gen2.next() + sensNum;
         
         cnt++;
-    } while( masterGenome.checkLinkExist(fromIdx, toIdx) && (cnt <= tryLimit));
+    } while( masterGenome.checkLinkExist(fromIdx, toIdx) && (cnt <= cfg->AddLinkMaxTries));
 
-    if(cnt <= tryLimit) {
+    if(cnt <= cfg->AddLinkMaxTries) {
         auto gen = rnd.getFRndGen(0.0, 1.0);
         Gene g(fromIdx, toIdx, gen.next(), masterGenome.getNextInnovation());
 
         masterGenome.addGene(g);
         this->addGene(g);
     } else {
-        std::cerr << "AddLink limit reached" << std::endl;
+        Log::get()->debug("AddLink tries limit reached");
     }
 }
 
 Genome Genome::crossover(Genome& gnm) {
-    std::cout << "crossover" << std::endl;
+    Log::get()->trace("Genome::crossover");
     auto& utl = Util::getInstance();
     auto gen = utl.getFRndGen(0.0, 1.0);
 
@@ -157,7 +157,7 @@ MasterGenome& MasterGenome::getInstance() {
 }
 
 bool MasterGenome::checkLinkExist(ushort from, ushort to) {
-    std::cout << "checkLinkExist: " << from << " " << to << std::endl;
+    Log::get()->debug("MasterGenome::checkLinkExist: {0}-{1}", from, to);
     //O(log n)
     if(genesSet.find(Gene(from, to, 0.0, 0)) != genesSet.end()) return true;
     return false;

@@ -1,6 +1,9 @@
 #include "util.hpp"
+#include "genome.hpp"
 
 using namespace pneat;
+
+logT Log::logger = nullptr; //Log::initLog();
 
 Util::Util() {
     gen = std::mt19937(Util::getTime());
@@ -27,18 +30,40 @@ bool Util::openJson(std::string filename) {
     try {
         read_json(filename, this->pt);
         loaded = true;
-    } catch(const json_parser_error& er) {
-        std::cout << er.what() << std::endl;            
+    } catch(const json_parser_error& er) { 
+       Log::get()->error("JSON reader {0}" , er.what());      
     }
     return loaded;
 }
 
 Config Util::json2Config() {
     Config cfg;
-    std::cout << "Config:" << std::endl;
-    ushort population = pt.get("config.population", 0);
-    std::cout << "\tPopulation: " << population << std::endl;
-    cfg.population = population;
+    Log::get()->debug("Reading Config:");
+
+    cfg.population = pt.get("config.population", 0);
+    Log::get()->debug("Population: {0}", cfg.population);
+
+    cfg.epochNum = pt.get("config.epochNum", 0);
+    Log::get()->debug("epochNum: {0}", cfg.epochNum);
+
+    cfg.AddLinkChance = pt.get("config.AddLinkChance", 0.0);
+    Log::get()->debug("AddLinkChance: {0}", cfg.AddLinkChance);
+
+    cfg.AddNodeChance = pt.get("config.AddNodeChance", 0.0);
+    Log::get()->debug("AddNodeChance: {0}", cfg.AddNodeChance);
+
+    cfg.MutateWeightsChance = pt.get("config.MutateWeightsChance", 0.0);
+    Log::get()->debug("MutateWeightsChance: {0}", cfg.MutateWeightsChance);
+
+    cfg.AddLinkMaxTries = pt.get("config.AddLinkMaxTries", 0);
+    Log::get()->debug("AddLinkMaxTries: {0}", cfg.AddLinkMaxTries);
+
+    cfg.loglevel = pt.get("config.loglevel", "info");
+    Log::get()->debug("loglevel: {0}", cfg.loglevel);
+
+    cfg.randomseed = pt.get("config.randomseed", 0);
+    Log::get()->debug("randomseed: {0}", cfg.randomseed);
+
     return cfg;
 }
 
@@ -46,7 +71,7 @@ Genome Util::json2Genome() {
     Genome g;
     auto& n = g.getNodes();
 
-    std::cout << "Genome: " << std::endl;
+    Log::get()->debug("Genome: ");
 
     ushort sens = pt.get("genome.sensors", 1);
     ushort outp = pt.get("genome.outputs", 1);
@@ -56,9 +81,7 @@ Genome Util::json2Genome() {
     for(int a=0; a<outp; a++) n.addOutput();
     for(int a=0; a<hid; a++) n.addNode();
 
-    std::cout << "\tsensors: " << sens << std::endl;
-    std::cout << "\toutputs: " << outp << std::endl;
-    std::cout << "\thidden: " << hid << std::endl;
+    Log::get()->debug("sensors: {0} outputs: {1} hidden: {2}", sens, outp , hid);
 
     ptree::key_type key = "genome.genes.";
     ushort idx = 0;
@@ -68,7 +91,7 @@ Genome Util::json2Genome() {
         ushort to = (it++)->second.get_value<ushort>();
         float wg = it->second.get_value<float>();
         g.addGene(Gene(from, to, wg, idx));
-        std::cout << from << " - " << to << " - " << wg << std::endl;
+        Log::get()->debug("Gene: from: {0} to: {1} wg: {2}", from, to, wg);
         idx++;
     }
 
@@ -84,7 +107,7 @@ std::pair<Config, Genome> Util::parseConfig(std::string filename) {
         cfg = this->json2Config();
         g = this->json2Genome();
     } else {
-        std::cerr << "JSON not loaded" << std::endl;
+        Log::get()->error("JSON not loaded");
     }
 
     return std::make_pair<>(cfg, g);

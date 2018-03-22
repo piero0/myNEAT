@@ -5,11 +5,12 @@ namespace pneat {
     class Population {
         std::vector<Species> species;
         MasterGenome& masterGenome;
+        Config* cfg;
 
         public:
             Population();
-            void initPopulation(ushort size, Genome& baseGenome);
+            void initPopulation(Config* cfg, Genome& baseGenome);
             void dump();
-            void testLoop(std::size_t iterNum);
+            void testLoop();
     };
 }

@@ -1,6 +1,16 @@
 {
     "config": {
-        "population": 150
+        "population": 10,
+        "epochNum": 10,
+        "AddLinkChance": 0.05,
+        "AddNodeChance": 0.03,
+        "MutateWeightsChance": 0.1,
+        "AddLinkMaxTries": 5
+    },
+    "system": {
+        "loglevel": "trace",
+        "randomseed": 0,
+        "threads": 1
     },
     "genome": {
         "sensors": 2,
