@@ -26,11 +26,15 @@ namespace pneat {
             Nodes<ushort>& getNodes() { return nodes; }
 
             void addGene(Gene g) { genes.push_back(g); }
-            void addNode() { nodes.addNode(); }
+            void addNode(ushort nodeIdx) { nodes.addNode(nodeIdx); }
             ushort getNodesCount() { return nodes.getCount(); }
 
-            void addLinkedNode(Gene& from, Gene& to) {
-                addNode(); addGene(from); addGene(to);
+            void addLinkedNode(Gene& from, Gene& to, ushort nodeIdx) {
+                addNode(nodeIdx); addGene(from); addGene(to);
+            }
+
+            bool linkExist(ushort from, ushort to) {
+                return std::binary_search(genes.begin(), genes.end(), Gene(from, to, 0.0, 0));
             }
 
             void print() const;
@@ -56,7 +60,7 @@ namespace pneat {
         public:
             static MasterGenome& getInstance();
             void initFromGenome(Genome& gnm);
-            bool checkLinkExist(ushort from, ushort to);
+            std::shared_ptr<Gene> checkLinkExist(ushort from, ushort to);
             ushort getNextInnovation() { return genes.size()+1; }
             void addGene(Gene& g) { genes.push_back(g); genesSet.insert(g); }
     };

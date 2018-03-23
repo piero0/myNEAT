@@ -61,14 +61,16 @@ void Genome::mutateAddNode() {
     Gene newFrom = Gene(g.fromIdx, newNodeIdx, g.weight, masterGenome.getNextInnovation());
     Gene newTo = Gene(newNodeIdx, g.toIdx, 1.0f, masterGenome.getNextInnovation()+1);
 
-    this->addLinkedNode(newFrom, newTo);
-    masterGenome.addLinkedNode(newFrom, newTo);
+    this->addLinkedNode(newFrom, newTo, newNodeIdx);
+    masterGenome.addLinkedNode(newFrom, newTo, newNodeIdx);
 }
 
 void Genome::mutateAddLink(Config* cfg) {
     Log::get()->debug("Genome::mutateAddLink");
+
     Util& rnd = Util::getInstance();
     MasterGenome& masterGenome = MasterGenome::getInstance();
+
     ushort fromIdx = 0, toIdx = 0,
         sensNum = nodes.getSensorNum(),
         hidNum = nodes.getHiddenNum(),
@@ -78,20 +80,42 @@ void Genome::mutateAddLink(Config* cfg) {
     auto gen1 = rnd.getSRndGen(0, sensNum+hidNum-1);
     auto gen2 = rnd.getSRndGen(0, outNum+hidNum-1);
 
+    std::shared_ptr<Gene> genePtr;
+
     do {
         //fromIdx - non-output node
         fromIdx = gen1.next();
         if(fromIdx >= sensNum) fromIdx += outNum;
         //toIdx - non-sensor node
         toIdx = gen2.next() + sensNum;
+
+        fromIdx = nodes.getIdx(fromIdx);
+        toIdx = nodes.getIdx(toIdx);
         
         cnt++;
-    } while( masterGenome.checkLinkExist(fromIdx, toIdx) && (cnt <= cfg->AddLinkMaxTries));
+
+        //If new gene not in master then add it
+        genePtr = masterGenome.checkLinkExist(fromIdx, toIdx);
+        if(genePtr == nullptr) break;
+        
+        //If in master it still can be in the current genome
+        if(this->linkExist(fromIdx, toIdx)) continue;
+        else break;
+
+
+    } while(cnt <= cfg->AddLinkMaxTries);
 
     if(cnt <= cfg->AddLinkMaxTries) {
-        auto gen = rnd.getFRndGen(0.0, 1.0);
-        Gene g(fromIdx, toIdx, gen.next(), masterGenome.getNextInnovation());
+        Gene g(0,0,0.0,0);
 
+        if(genePtr != nullptr) g = *genePtr;
+        else {
+            auto gen = rnd.getFRndGen(0.0, 1.0);
+            g = Gene(fromIdx, toIdx, gen.next(), masterGenome.getNextInnovation());
+        }
+
+        //Genes must be monotonic by innovNum
+        //need to rebuild the list if gene is in the middle
         masterGenome.addGene(g);
         this->addGene(g);
     } else {
@@ -145,8 +169,13 @@ Genome Genome::crossover(Genome& gnm) {
         checkFunc(el.toIdx);
     }
 
+
     //sensors and outputs counts do not change in my implementation
-    nds.setup(nodes.getSensorNum(), nodes.getOutputNum(), nodenums.size());
+    nds.setup(nodes.getSensorNum(), nodes.getOutputNum()); //nodeIdx needed
+
+    for(auto& el: nodenums) {
+        nds.addNode(el);
+    }
 
     return child;
 }
@@ -156,11 +185,12 @@ MasterGenome& MasterGenome::getInstance() {
     return mg;
 }
 
-bool MasterGenome::checkLinkExist(ushort from, ushort to) {
+std::shared_ptr<Gene> MasterGenome::checkLinkExist(ushort from, ushort to) {
     Log::get()->debug("MasterGenome::checkLinkExist: {0}-{1}", from, to);
     //O(log n)
-    if(genesSet.find(Gene(from, to, 0.0, 0)) != genesSet.end()) return true;
-    return false;
+    auto it = genesSet.find(Gene(from, to, 0.0, 0));
+    if(it != genesSet.end()) return std::make_shared<Gene>(*it);
+    return nullptr;
 }
 
 void MasterGenome::initFromGenome(Genome& gnm) {

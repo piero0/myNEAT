@@ -75,20 +75,19 @@ Genome Util::json2Genome() {
 
     ushort sens = pt.get("genome.sensors", 1);
     ushort outp = pt.get("genome.outputs", 1);
-    ushort hid = pt.get("genome.hidden", 0);
+    //ushort hid = pt.get("genome.hidden", 0);
 
-    for(int a=0; a<sens; a++) n.addSensor();
-    for(int a=0; a<outp; a++) n.addOutput();
-    for(int a=0; a<hid; a++) n.addNode();
-
-    Log::get()->debug("sensors: {0} outputs: {1} hidden: {2}", sens, outp , hid);
+    Log::get()->debug("sensors: {0} outputs: {1}", sens, outp);
+    n.setup(sens, outp);
 
     ptree::key_type key = "genome.genes.";
     ushort idx = 0;
     for(auto& el: pt.get_child(key)) {
         auto it = el.second.begin();
         ushort from = (it++)->second.get_value<ushort>();
+        n.addNode(from);
         ushort to = (it++)->second.get_value<ushort>();
+        n.addNode(to);
         float wg = it->second.get_value<float>();
         g.addGene(Gene(from, to, wg, idx));
         Log::get()->debug("Gene: from: {0} to: {1} wg: {2}", from, to, wg);
