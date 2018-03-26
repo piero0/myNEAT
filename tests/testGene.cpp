@@ -24,15 +24,25 @@ TEST_CASE("Nodes", "[nodes]") {
     }
 
     SECTION("Adding nodes") {
-        nodes.addSensor();
-        REQUIRE(nodes.getSensorNum() == 1);
+        SECTION("Add sensor") {
+            nodes.setup(1, 0);
+            REQUIRE(nodes.getSensorNum() == 1);
+        }
 
-        nodes.addOutput();
-        REQUIRE(nodes.getOutputNum() == 1);
+        SECTION("Add output") {
+            nodes.setup(0, 1);
+            REQUIRE(nodes.getOutputNum() == 1);
+        }
 
-        nodes.addNode();
-        REQUIRE(nodes.getHiddenNum() == 1);
+        SECTION("Add hidden") {
+            nodes.addNode(1);
+            REQUIRE(nodes.getHiddenNum() == 1);
+        }
 
-        REQUIRE(nodes.getCount() == 3);
+        SECTION("Add all") {
+            nodes.setup(1, 1);
+            nodes.addNode(1);
+            REQUIRE(nodes.getCount() == 3);
+        }   
     }
 }

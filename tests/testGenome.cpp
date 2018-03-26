@@ -5,6 +5,8 @@ using namespace pneat;
 
 TEST_CASE("Genome", "[genome]") {
     Log::initLog();
+    Log::set_level("debug");
+    
     auto& rnd = Util::getInstance(1234); //make sure we mutate the same way for each test
     Genome gnm;
 
@@ -44,25 +46,53 @@ TEST_CASE("Genome", "[genome]") {
         }
     }
 
+    SECTION("Innovation Present") {
+        Gene g1(0,0,0.0,0),
+            g2(0,0,0.0,1),
+            g3(0,0,0.0,2),
+            g4(0,0,0.0,4),
+            g5(0,0,0.0,6);
+
+        Genome gnm2;
+        gnm2.addGene(g1);
+        gnm2.addGene(g2);
+        gnm2.addGene(g3);
+        gnm2.addGene(g4);
+        gnm2.addGene(g5);
+
+        auto it = gnm2.isInnovationPresent(3);
+        REQUIRE(it->innovationIdx != 3); //got next one
+
+        it = gnm2.isInnovationPresent(7);
+        REQUIRE(it == gnm2.getGenes().end()); 
+
+        it = gnm2.isInnovationPresent(2);
+        REQUIRE(it->innovationIdx == 2); 
+    }
+
     SECTION("mutateAddLink") {
         Config cfg;
-        cfg.AddLinkMaxTries = 5;
-        Gene g1(0, 2, 0.5, 0), g2(1, 2, 0.7, 1), g3(2, 3, 0.1, 2);
+        cfg.AddLinkMaxTries = 1;
+        Gene g1(0, 3, 0.5, 0), g2(1, 3, 0.7, 1), g3(3, 2, 0.1, 2);
 
         auto& nodes = gnm.getNodes();
-        nodes.addNode();
-        nodes.addSensor();
-        nodes.addSensor();
-        nodes.addOutput();
+        nodes.setup(2, 1);
+        nodes.addNodes({3});
         gnm.addGene(g1); gnm.addGene(g2); gnm.addGene(g3);
-        
-        Genome master = gnm;
+
+        auto& mg = MasterGenome::getInstance();
+        mg.initFromGenome(gnm);
 
         gnm.mutateAddLink(&cfg);
 
         Gene mut = gnm.getGenes()[3];
-        REQUIRE(mut.fromIdx != 2);
-        REQUIRE(mut.toIdx > 1);
+        REQUIRE(mut.fromIdx == 3);
+        REQUIRE(mut.toIdx == 3);
+
+        gnm.mutateAddLink(&cfg);
+        mut = gnm.getGenes()[4];
+        REQUIRE(mut.fromIdx == 0);
+        REQUIRE(mut.toIdx == 2);
     }
 
     SECTION("mutateAddNode") {
@@ -73,7 +103,7 @@ TEST_CASE("Genome", "[genome]") {
         gnm1.addGene(g2);
         gnm1.addGene(g3);
 
-        gnm1.getNodes().setup(2, 1, 0);
+        gnm1.getNodes().setup(2, 1);
 
         ushort nodet0 = gnm1.getNodesCount();
 
@@ -116,9 +146,9 @@ TEST_CASE("Genome", "[genome]") {
             mg.addGene(el);
         }
 
-        mg.getNodes().setup(2, 1, 2);
-        gnm1.getNodes().setup(2, 1, 2);
-        gnm2.getNodes().setup(2, 1, 2);
+        mg.getNodes().setup(2, 1);
+        gnm1.getNodes().setup(2, 1);
+        gnm2.getNodes().setup(2, 1);
 
         gnm1.addGene(gar[6]);
         gnm1.addGene(gar[7]);
@@ -152,9 +182,7 @@ TEST_CASE("MasterGenome", "[mastergenome]") {
     auto& n = gnm.getNodes();
 
     SECTION("Add nodes") {
-        n.addNode();
-        n.addNode();
-        n.addNode();
+        n.addNodes({1,2,3});
 
         REQUIRE(gnm.getNodes().getCount() == 3);
 
@@ -167,8 +195,8 @@ TEST_CASE("MasterGenome", "[mastergenome]") {
             REQUIRE((gnm.getNodes().getCount()) == (mg.getNodes().getCount()));
 
             SECTION("Check link exist") {
-                REQUIRE(mg.checkLinkExist(3,4) == true);
-                REQUIRE(mg.checkLinkExist(4,5) == false);
+                REQUIRE(mg.checkLinkExist(3,4) != nullptr);
+                REQUIRE(mg.checkLinkExist(4,5) == nullptr);
             }
         }
     }

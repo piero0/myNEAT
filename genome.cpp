@@ -75,49 +75,64 @@ void Genome::mutateAddLink(Config* cfg) {
         sensNum = nodes.getSensorNum(),
         hidNum = nodes.getHiddenNum(),
         outNum = nodes.getOutputNum(),
-        cnt = 0;
+        cnt = -1;
 
     auto gen1 = rnd.getSRndGen(0, sensNum+hidNum-1);
     auto gen2 = rnd.getSRndGen(0, outNum+hidNum-1);
 
     std::shared_ptr<Gene> genePtr;
+    geneIt it;
 
     do {
+        cnt++;
         //fromIdx - non-output node
         fromIdx = gen1.next();
         if(fromIdx >= sensNum) fromIdx += outNum;
         //toIdx - non-sensor node
         toIdx = gen2.next() + sensNum;
 
+        Log::get()->debug("Idxs: {0}-{1}", fromIdx, toIdx);
+
         fromIdx = nodes.getIdx(fromIdx);
         toIdx = nodes.getIdx(toIdx);
+
+        Log::get()->debug("Nodes: {0}-{1}", fromIdx, toIdx);
         
-        cnt++;
+        
 
         //If new gene not in master then add it
         genePtr = masterGenome.checkLinkExist(fromIdx, toIdx);
-        if(genePtr == nullptr) break;
+        if(genePtr == nullptr) {
+            Log::get()->debug("Link not in master");
+            break;
+        }
         
         //If in master it still can be in the current genome
-        if(this->linkExist(fromIdx, toIdx)) continue;
-        else break;
+        //find using innov num
 
+        it = this->isInnovationPresent(genePtr->innovationIdx);
 
+        if(it != genes.end() && it->innovationIdx == genePtr->innovationIdx) {
+            Log::get()->debug("Link in current genome");
+            continue;
+        }
+        else {
+            Log::get()->debug("Link not in current genome");
+            break;
+        }
     } while(cnt <= cfg->AddLinkMaxTries);
 
     if(cnt <= cfg->AddLinkMaxTries) {
-        Gene g(0,0,0.0,0);
-
-        if(genePtr != nullptr) g = *genePtr;
-        else {
+        if(genePtr != nullptr) { //gene exist, insert into current genome
+            Log::get()->debug("Insert existing gene before pos {0}", it-genes.begin());
+            genes.insert(it, *genePtr);
+        } else { //doesn't exist, create and add at the end
+            Log::get()->debug("Creating new link gene");
             auto gen = rnd.getFRndGen(0.0, 1.0);
-            g = Gene(fromIdx, toIdx, gen.next(), masterGenome.getNextInnovation());
+            auto g = Gene(fromIdx, toIdx, gen.next(), masterGenome.getNextInnovation());
+            masterGenome.addGene(g);
+            this->addGene(g);
         }
-
-        //Genes must be monotonic by innovNum
-        //need to rebuild the list if gene is in the middle
-        masterGenome.addGene(g);
-        this->addGene(g);
     } else {
         Log::get()->debug("AddLink tries limit reached");
     }
@@ -196,5 +211,6 @@ std::shared_ptr<Gene> MasterGenome::checkLinkExist(ushort from, ushort to) {
 void MasterGenome::initFromGenome(Genome& gnm) {
     this->genes = gnm.getGenes();
     this->nodes = gnm.getNodes();
+    genesSet.clear();
     for(auto& el: genes) genesSet.insert(el);
 }

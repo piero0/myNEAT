@@ -8,6 +8,7 @@
 
 namespace pneat {
     using Genes = std::vector<Gene>;
+    using geneIt = Genes::iterator;
 
     class Genome {
         protected:
@@ -33,8 +34,12 @@ namespace pneat {
                 addNode(nodeIdx); addGene(from); addGene(to);
             }
 
-            bool linkExist(ushort from, ushort to) {
-                return std::binary_search(genes.begin(), genes.end(), Gene(from, to, 0.0, 0));
+            geneIt isInnovationPresent(ushort innov) {
+                return std::lower_bound(genes.begin(), genes.end(), innov, 
+                    [](const Gene& g1, const ushort& i) { 
+                        return g1.innovationIdx < i; 
+                    }
+                );
             }
 
             void print() const;
