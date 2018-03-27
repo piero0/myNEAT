@@ -34,13 +34,17 @@ namespace pneat {
                 addNode(nodeIdx); addGene(from); addGene(to);
             }
 
-            geneIt isInnovationPresent(ushort innov) {
+            geneIt findInnovation(ushort innov) {
                 return std::lower_bound(genes.begin(), genes.end(), innov, 
                     [](const Gene& g1, const ushort& i) { 
                         return g1.innovationIdx < i; 
                     }
                 );
             }
+
+            bool isMatch(geneIt, ushort);
+            void insertExistingGenes(ushort innov);
+            void createNewNodeFrom(Gene& g);
 
             void print() const;
             
@@ -66,7 +70,8 @@ namespace pneat {
             static MasterGenome& getInstance();
             void initFromGenome(Genome& gnm);
             std::shared_ptr<Gene> checkLinkExist(ushort from, ushort to);
-            ushort getNextInnovation() { return genes.size()+1; }
+            ushort getNextInnovation() { return genes.size(); }
             void addGene(Gene& g) { genes.push_back(g); genesSet.insert(g); }
+            void addLinkedNode(Gene& from, Gene& to, ushort nodeIdx);
     };
 }

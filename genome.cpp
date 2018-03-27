@@ -15,6 +15,17 @@ void Genome::print() const {
     Log::get()->debug("--End Genome--");
 }
 
+bool Genome::isMatch(geneIt it, ushort innov) {
+    if(it != genes.end() && it->innovationIdx == innov) {
+        Log::get()->debug("Innovation in current genome");
+        return true;
+    }
+    else {
+        Log::get()->debug("Innovation not in current genome");
+        return false;
+    }
+}
+
 void Genome::mutateWeights() {
     Log::get()->trace("Genome::mutateWeights");
 
@@ -22,6 +33,41 @@ void Genome::mutateWeights() {
     auto gen = u.getFRndGen(-0.5, 0.5);
 
     for(auto& el: genes) el.weight += gen.next();
+}
+
+void Genome::insertExistingGenes(ushort innov) {
+    Log::get()->trace("Genome::insertExistingGenes");
+    auto& mg = MasterGenome::getInstance();
+
+    Gene& g1 = mg.getGenes()[innov];
+    Gene& g2 = mg.getGenes()[innov+1];
+
+    Log::get()->debug("Genes to insert: {0}, {1}", g1.innovationIdx, g2.innovationIdx);
+
+    auto it = this->findInnovation(innov);
+    Log::get()->debug("Inserting before: {0}", it->innovationIdx);
+
+    genes.insert(it, {g1, g2});
+}
+
+void Genome::createNewNodeFrom(Gene& g) {
+    Log::get()->trace("Genome::createNewNodeFrom");
+    auto& mg = MasterGenome::getInstance();
+
+    auto newNodeIdx = mg.getNodes().getNextNodeIdx();
+    auto newInnov = mg.getNextInnovation();
+
+    Log::get()->debug("newNodeIdx {0}, newInnov {1}", newNodeIdx, newInnov);
+
+    g.childIdx = newInnov;
+    Gene newFrom = Gene(g.fromIdx, newNodeIdx, g.weight, newInnov);
+    Gene newTo = Gene(newNodeIdx, g.toIdx, 1.0f, newInnov+1);
+
+    newFrom.print();
+    newTo.print();
+ 
+    this->addLinkedNode(newFrom, newTo, newNodeIdx);
+    mg.addLinkedNode(newFrom, newTo, newNodeIdx);
 }
 
 void Genome::mutateAddNode() {
@@ -39,30 +85,43 @@ void Genome::mutateAddNode() {
     Util& rnd = Util::getInstance();
     auto gen = rnd.getSRndGen(0, genes.size()-1);
     ushort geneIdx = 0;
-     
-    do { //If link's disabled it's probably been mutated already
+
+    while(true) {
         geneIdx = gen.next();
-    } while(!genes[geneIdx].enabled);
+        if(!genes[geneIdx].enabled) continue;
+        
+        Gene& g = genes[geneIdx];
 
-    Gene& g = genes[geneIdx];
-    g.enabled = false;
+        Log::get()->debug("Picked gene at idx {0}", geneIdx);
+        Log::get()->debug("Gene: {0}-{1} innov {2}", g.fromIdx, g.toIdx, g.innovationIdx);
+        
+        //Check in master
+        Gene& mg = masterGenome.getGenes()[g.innovationIdx];
 
-    ushort newNodeIdx = nodes.getCount() + 1,
-    masterCount = masterGenome.getNodesCount() + 1;
+        Log::get()->debug("From master: innov {0}, child {1}", mg.innovationIdx, mg.childIdx);
 
-    /* MasterGenome can have a higher idx number
-        e.g. Assume this genome's link is between 3-4, newIdx can be 5
-        but in master it might be for example maxIdx = 9
-        and the master is always right :) 
-    */
-    if(newNodeIdx < masterCount) newNodeIdx = masterCount;
+        if(mg.innovationIdx != g.innovationIdx) {
+            Log::get()->error("Wrong Innovation index: {0} != {1}", mg.innovationIdx, g.innovationIdx);
+            return;
+        }
 
-    //Create new links
-    Gene newFrom = Gene(g.fromIdx, newNodeIdx, g.weight, masterGenome.getNextInnovation());
-    Gene newTo = Gene(newNodeIdx, g.toIdx, 1.0f, masterGenome.getNextInnovation()+1);
+        if(mg.childIdx != 0) {
+            auto it = this->findInnovation(mg.childIdx);
+            if(this->isMatch(it, mg.childIdx)) {
+                Log::get()->debug("Genes in current genome, next try");
+                continue;
+            }
+        }
 
-    this->addLinkedNode(newFrom, newTo, newNodeIdx);
-    masterGenome.addLinkedNode(newFrom, newTo, newNodeIdx);
+        if(mg.childIdx != 0) {
+            this->insertExistingGenes(mg.childIdx);
+        } else {
+            this->createNewNodeFrom(mg);
+        }
+
+        g.enabled = false;
+        break;
+    }
 }
 
 void Genome::mutateAddLink(Config* cfg) {
@@ -98,8 +157,6 @@ void Genome::mutateAddLink(Config* cfg) {
 
         Log::get()->debug("Nodes: {0}-{1}", fromIdx, toIdx);
         
-        
-
         //If new gene not in master then add it
         genePtr = masterGenome.checkLinkExist(fromIdx, toIdx);
         if(genePtr == nullptr) {
@@ -109,17 +166,10 @@ void Genome::mutateAddLink(Config* cfg) {
         
         //If in master it still can be in the current genome
         //find using innov num
-
-        it = this->isInnovationPresent(genePtr->innovationIdx);
-
-        if(it != genes.end() && it->innovationIdx == genePtr->innovationIdx) {
-            Log::get()->debug("Link in current genome");
-            continue;
-        }
-        else {
-            Log::get()->debug("Link not in current genome");
-            break;
-        }
+        it = this->findInnovation(genePtr->innovationIdx);
+        if(this->isMatch(it, genePtr->innovationIdx)) continue;
+        else break;
+ 
     } while(cnt <= cfg->AddLinkMaxTries);
 
     if(cnt <= cfg->AddLinkMaxTries) {
@@ -213,4 +263,12 @@ void MasterGenome::initFromGenome(Genome& gnm) {
     this->nodes = gnm.getNodes();
     genesSet.clear();
     for(auto& el: genes) genesSet.insert(el);
+}
+
+void MasterGenome::addLinkedNode(Gene& from, Gene& to, ushort nodeIdx) {
+    addNode(nodeIdx); 
+    addGene(from); 
+    addGene(to);
+    genesSet.insert(from);
+    genesSet.insert(to);
 }

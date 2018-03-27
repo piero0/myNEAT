@@ -58,10 +58,10 @@ Config Util::json2Config() {
     cfg.AddLinkMaxTries = pt.get("config.AddLinkMaxTries", 0);
     Log::get()->debug("AddLinkMaxTries: {0}", cfg.AddLinkMaxTries);
 
-    cfg.loglevel = pt.get("config.loglevel", "info");
+    cfg.loglevel = pt.get("system.loglevel", "info");
     Log::get()->debug("loglevel: {0}", cfg.loglevel);
 
-    cfg.randomseed = pt.get("config.randomseed", 0);
+    cfg.randomseed = pt.get("system.randomseed", 0);
     Log::get()->debug("randomseed: {0}", cfg.randomseed);
 
     return cfg;
@@ -85,9 +85,9 @@ Genome Util::json2Genome() {
     for(auto& el: pt.get_child(key)) {
         auto it = el.second.begin();
         ushort from = (it++)->second.get_value<ushort>();
-        n.addNode(from);
+        if(from >= sens+outp) n.addNode(from);
         ushort to = (it++)->second.get_value<ushort>();
-        n.addNode(to);
+        if(to >= sens+outp) n.addNode(to);
         float wg = it->second.get_value<float>();
         g.addGene(Gene(from, to, wg, idx));
         Log::get()->debug("Gene: from: {0} to: {1} wg: {2}", from, to, wg);

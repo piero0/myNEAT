@@ -9,6 +9,7 @@ Gene::Gene(ushort from, ushort to, float weight, ushort innov) {
     this->weight = weight;
     innovationIdx = innov;
     enabled = true;    
+    childIdx = 0;
 }
 
 void Gene::print() const {

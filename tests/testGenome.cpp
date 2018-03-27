@@ -5,7 +5,7 @@ using namespace pneat;
 
 TEST_CASE("Genome", "[genome]") {
     Log::initLog();
-    Log::set_level("debug");
+    Log::set_level("trace");
     
     auto& rnd = Util::getInstance(1234); //make sure we mutate the same way for each test
     Genome gnm;
@@ -60,13 +60,13 @@ TEST_CASE("Genome", "[genome]") {
         gnm2.addGene(g4);
         gnm2.addGene(g5);
 
-        auto it = gnm2.isInnovationPresent(3);
+        auto it = gnm2.findInnovation(3);
         REQUIRE(it->innovationIdx != 3); //got next one
 
-        it = gnm2.isInnovationPresent(7);
+        it = gnm2.findInnovation(7);
         REQUIRE(it == gnm2.getGenes().end()); 
 
-        it = gnm2.isInnovationPresent(2);
+        it = gnm2.findInnovation(2);
         REQUIRE(it->innovationIdx == 2); 
     }
 
@@ -96,7 +96,7 @@ TEST_CASE("Genome", "[genome]") {
     }
 
     SECTION("mutateAddNode") {
-        Gene g1(0, 2, 0.5, 0), g2(1, 2, 0.7, 1), g3(2, 3, 0.1, 2);
+        Gene g1(0, 3, 0.5, 0), g2(1, 3, 0.7, 1), g3(3, 2, 0.1, 2);
         Genome gnm1;
 
         gnm1.addGene(g1);
@@ -104,6 +104,10 @@ TEST_CASE("Genome", "[genome]") {
         gnm1.addGene(g3);
 
         gnm1.getNodes().setup(2, 1);
+        gnm1.addNode(3);
+
+        auto& mg = MasterGenome::getInstance();
+        mg.initFromGenome(gnm1);
 
         ushort nodet0 = gnm1.getNodesCount();
 
@@ -115,10 +119,10 @@ TEST_CASE("Genome", "[genome]") {
         ushort nodet1 = gnm1.getNodesCount();
 
         REQUIRE(nodet0 != nodet1);
-        REQUIRE(g4.fromIdx == 2);
+        REQUIRE(g4.fromIdx == 3);
         REQUIRE(g4.toIdx == 4);
         REQUIRE(g5.fromIdx == 4);
-        REQUIRE(g5.toIdx == 3);
+        REQUIRE(g5.toIdx == 2);
     }
 
     SECTION("crossover") {

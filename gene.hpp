@@ -64,6 +64,10 @@ template<class T> class Nodes {
             return nodeIdx[idx]; 
         }
 
+        const T getNextNodeIdx() const {
+            return nodeIdx[getCount()-1]+1;
+        }
+
         void print() const {
             std::string txt = "|";
             for(std::size_t a=0; a<nodeIdx.size(); a++) txt += std::to_string(nodeIdx[a]) + "|";
@@ -79,7 +83,7 @@ class Gene {
         ushort fromIdx;
         ushort toIdx;
         ushort innovationIdx; 
-        //ushort parentIdx
+        ushort childIdx; //used in mutateAddNode
         bool enabled;
 
         Gene(ushort from, ushort to, float weight, ushort innov);
