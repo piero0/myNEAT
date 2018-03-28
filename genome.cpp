@@ -113,13 +113,13 @@ void Genome::mutateAddNode() {
             }
         }
 
+        g.enabled = false;
+
         if(mg.childIdx != 0) {
             this->insertExistingGenes(mg.childIdx);
         } else {
             this->createNewNodeFrom(mg);
         }
-
-        g.enabled = false;
         break;
     }
 }
