@@ -28,6 +28,9 @@ struct Config {
     ushort AddLinkMaxTries;
     std::string loglevel;
     std::size_t randomseed;
+    bool isValid;
+
+    Config(): isValid(false) {}
 };
 
 template<class outT, class distT> class Rnd {
@@ -44,16 +47,23 @@ template<class outT, class distT> class Rnd {
 };
 
 class Log {
-    static logT logger;
+    static logT logger; 
 
     public:
         static logT get() { return logger; }
-        static logT initLog() {
-            if(!logger)
-                logger = spdlog::basic_logger_st("log1", "neat.log");
+        static bool initLog() {
+            bool stat = false;
+            if(!logger) {
+                try {
+                    logger = spdlog::basic_logger_st("log1", "neat.log");
+                    stat = true;
+                } catch(spdlog::spdlog_ex& ex) {
+                    std::cerr << "Could not open log file" << std::endl;
+                }
+            }
             logger->set_level(spdlog::level::info);
             logger->set_pattern("[%X.%e] [%l] %v");
-            return logger;
+            return stat;
         }
 
         static void set_level(std::string level) {
@@ -66,28 +76,31 @@ class Log {
         }
 };
 
+class ConfigLoader {
+    ptree pt;
+    bool openJson(std::string filename);
+    Config json2Config();
+    Genome json2Genome();
+
+    public:
+        std::pair<Config, Genome> parseConfig(std::string filename);
+};
+
 class Util {
-    private:
-        std::mt19937 gen;
-        ptree pt;
-
-        Util();
-        Util(std::size_t seed);
-
-        bool openJson(std::string filename);
-        Config json2Config();
-        Genome json2Genome();
+    std::mt19937 gen;
+    Util();
 
     public:
         Util(Util const& u) = delete;
         void operator=(Util const& u) = delete;
 
-        static Util& getInstance(std::size_t seed = 0);
+        static Util& getInstance();
         static long getTime();
-
-        Rnd<ushort, ushortDist> getSRndGen(ushort begin, ushort end) { return Rnd<ushort, ushortDist>(gen, begin, end); }
-        Rnd<float, floatDist> getFRndGen(float begin, float end) { return Rnd<float, floatDist>(gen, begin, end); }
+        void initRandomGen(std::size_t seed);
 
         std::pair<Config, Genome> parseConfig(std::string filename);
+
+        Rnd<ushort, ushortDist> getSRndGen(ushort begin, ushort end) { return Rnd<ushort, ushortDist>(gen, begin, end); }
+        Rnd<float, floatDist> getFRndGen(float begin, float end) { return Rnd<float, floatDist>(gen, begin, end); }   
 };
 }

@@ -7,7 +7,8 @@ TEST_CASE("Genome", "[genome]") {
     Log::initLog();
     Log::set_level("trace");
     
-    auto& rnd = Util::getInstance(1234); //make sure we mutate the same way for each test
+    auto& rnd = Util::getInstance();
+    //rnd.initRandomGen(1234); //make sure we mutate the same way for each test
     Genome gnm;
 
     auto& g = gnm.getGenes();
@@ -86,13 +87,13 @@ TEST_CASE("Genome", "[genome]") {
         gnm.mutateAddLink(&cfg);
 
         Gene mut = gnm.getGenes()[3];
-        REQUIRE(mut.fromIdx == 3);
-        REQUIRE(mut.toIdx == 3);
+        REQUIRE(mut.fromIdx == 1);
+        REQUIRE(mut.toIdx == 2);
 
         gnm.mutateAddLink(&cfg);
         mut = gnm.getGenes()[4];
         REQUIRE(mut.fromIdx == 0);
-        REQUIRE(mut.toIdx == 2);
+        REQUIRE(mut.toIdx == 0);
     }
 
     SECTION("mutateAddNode") {

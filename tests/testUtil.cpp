@@ -6,7 +6,8 @@ using namespace pneat;
 
 TEST_CASE("Util", "[util]") {
     //use const seed to always get the same results (it's mt19937)
-    auto& g1 = Util::getInstance(1234);
+    auto& g1 = Util::getInstance();
+    g1.initRandomGen(1234);
 
     auto& g2 = Util::getInstance();
     

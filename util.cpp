@@ -5,18 +5,17 @@ using namespace pneat;
 
 logT Log::logger = nullptr; //Log::initLog();
 
-Util::Util() {
-    gen = std::mt19937(Util::getTime());
-}
+Util::Util() {}
 
-Util::Util(std::size_t seed) {
-    if(seed == 0) seed = Util::getTime();
-    gen = std::mt19937(seed);
-}
-
-Util& Util::getInstance(std::size_t seed) {
-    static Util u(seed);
+Util& Util::getInstance() {
+    static Util u;
     return u;
+}
+
+void Util::initRandomGen(std::size_t seed) {
+    if(seed == 0) seed = Util::getTime();
+    Log::get()->info("Random Seed: {0}", seed);
+    gen = std::mt19937(seed);
 }
 
 long Util::getTime() {
@@ -25,7 +24,7 @@ long Util::getTime() {
     ).count();
 }
 
-bool Util::openJson(std::string filename) {
+bool ConfigLoader::openJson(std::string filename) {
     bool loaded = false;
     try {
         read_json(filename, this->pt);
@@ -36,7 +35,7 @@ bool Util::openJson(std::string filename) {
     return loaded;
 }
 
-Config Util::json2Config() {
+Config ConfigLoader::json2Config() {
     Config cfg;
     Log::get()->debug("Reading Config:");
 
@@ -64,10 +63,12 @@ Config Util::json2Config() {
     cfg.randomseed = pt.get("system.randomseed", 0);
     Log::get()->debug("randomseed: {0}", cfg.randomseed);
 
+    cfg.isValid = true;
+
     return cfg;
 }
 
-Genome Util::json2Genome() {
+Genome ConfigLoader::json2Genome() {
     Genome g;
     auto& n = g.getNodes();
 
@@ -97,7 +98,9 @@ Genome Util::json2Genome() {
     return g;
 }
 
-std::pair<Config, Genome> Util::parseConfig(std::string filename) {
+std::pair<Config, Genome> Util::parseConfig(std::string filename) { return ConfigLoader().parseConfig(filename); }
+
+std::pair<Config, Genome> ConfigLoader::parseConfig(std::string filename) {
     bool jsonLoaded = this->openJson(filename);
     Config cfg;
     Genome g;
