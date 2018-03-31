@@ -4,11 +4,10 @@ using namespace pneat;
 
 void RunNEAT(std::string configFile) {
     if(!Log::initLog()) return;
-    Util& util = Util::getInstance();
 
-    Random::initRandomGen(1234);
+    Random::init(1234);
 
-    auto cfg = util.parseConfig(configFile);
+    auto cfg = ConfigLoader().parseConfig(configFile);
 
     if(!cfg.first.isValid) {
         std::cerr << "ERROR: Missing or invalid JSON configuration" << std::endl;

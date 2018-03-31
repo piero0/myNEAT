@@ -3,17 +3,10 @@
 
 using namespace pneat;
 
-logT Log::logger = nullptr; //Log::initLog();
+logT Log::logger = nullptr;
 std::mt19937 Random::gen = std::mt19937();
 
-Util::Util() {}
-
-Util& Util::getInstance() {
-    static Util u;
-    return u;
-}
-
-void Random::initRandomGen(std::size_t seed) {
+void Random::init(std::size_t seed) {
     if(seed == 0) seed = Random::getTime();
     Log::get()->info("Random Seed: {0}", seed);
     Random::gen = std::mt19937(seed);
@@ -98,8 +91,6 @@ Genome ConfigLoader::json2Genome() {
 
     return g;
 }
-
-std::pair<Config, Genome> Util::parseConfig(std::string filename) { return ConfigLoader().parseConfig(filename); }
 
 std::pair<Config, Genome> ConfigLoader::parseConfig(std::string filename) {
     bool jsonLoaded = this->openJson(filename);

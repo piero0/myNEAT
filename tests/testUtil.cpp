@@ -7,7 +7,7 @@ using namespace pneat;
 TEST_CASE("Util", "[util]") {
     //use const seed to always get the same results (it's mt19937)
     auto& g1 = Util::getInstance();
-    Random::initRandomGen(1234);
+    Random::init(1234);
 
     auto& g2 = Util::getInstance();
     
@@ -21,13 +21,11 @@ TEST_CASE("Util", "[util]") {
     }
 
     SECTION("random gen is not restarted") {
-        auto& gen1 = Util::getInstance();
-        auto gen11 = Random::get<ushort>(0, 100);
-        auto x1 = gen11.next();
+        auto gen1 = Random::get<ushort>(0, 100);
+        auto x1 = gen1.next();
 
-        auto& gen2 = Util::getInstance();
-        auto gen21 = Random::get<ushort>(0, 100);
-        auto x2 = gen21.next();
+        auto gen2 = Random::get<ushort>(0, 100);
+        auto x2 = gen2.next();
 
         REQUIRE(x1 != x2);
     }
@@ -41,9 +39,8 @@ TEST_CASE("Util", "[util]") {
     }
 
     SECTION("new Rnd") {
-        std::mt19937 gen(1234);
-        Rnd<float, floatDist> r(gen, 0.0, 1.0);
-        Rnd<float, floatDist> r2(gen, 2.0, 3.0);
+        RndGen<float> r(0.0, 1.0);
+        RndGen<float> r2(2.0, 3.0);
         float w, w2;
 
         for(int a=0; a<100; a++) {

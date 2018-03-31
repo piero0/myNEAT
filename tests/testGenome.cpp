@@ -8,7 +8,7 @@ TEST_CASE("Genome", "[genome]") {
     Log::set_level("trace");
     
     auto& rnd = Util::getInstance();
-    //rnd.initRandomGen(1234); //make sure we mutate the same way for each test
+    //rnd.init(1234); //make sure we mutate the same way for each test
     Genome gnm;
 
     auto& g = gnm.getGenes();
