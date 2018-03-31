@@ -6,24 +6,13 @@ Genome::Genome() {
 }
 
 void Genome::print() const {
-    Log::get()->debug("--Start Genome--");
-    Log::get()->debug("Nodes: In: {0} Out: {1} Hid: {2}", 
+    Log::get()->trace("--Start Genome--");
+    Log::get()->trace("Nodes: In: {0} Out: {1} Hid: {2}", 
         nodes.getSensorNum(), nodes.getOutputNum(), nodes.getHiddenNum()
     );
     Log::get()->trace("Genes:");
-    for(const auto& g: genes) g.print();
-    Log::get()->debug("--End Genome--");
-}
-
-bool Genome::isMatch(geneIt it, ushort innov) {
-    if(it != genes.end() && it->innovationIdx == innov) {
-        Log::get()->debug("Innovation in current genome");
-        return true;
-    }
-    else {
-        Log::get()->debug("Innovation not in current genome");
-        return false;
-    }
+    for(const auto& g: genes) Log::get()->trace(g.print());
+    Log::get()->trace("--End Genome--");
 }
 
 void Genome::mutateWeights() {
@@ -62,15 +51,15 @@ void Genome::createNewNodeFrom(Gene& g) {
     Gene newFrom = Gene(g.fromIdx, newNodeIdx, g.weight, newInnov);
     Gene newTo = Gene(newNodeIdx, g.toIdx, 1.0f, newInnov+1);
 
-    newFrom.print();
-    newTo.print();
+    Log::get()->debug(newFrom.print());
+    Log::get()->debug(newTo.print());
  
     this->addLinkedNode(newFrom, newTo, newNodeIdx);
     mg.addLinkedNode(newFrom, newTo, newNodeIdx);
 }
 
 void Genome::mutateAddNode() {
-    Log::get()->debug("Genome::mutateAddNode");
+    Log::get()->trace("Genome::mutateAddNode");
     MasterGenome& masterGenome = MasterGenome::getInstance();
     /*
     1) pick a link
@@ -122,8 +111,8 @@ void Genome::mutateAddNode() {
     }
 }
 
-void Genome::mutateAddLink(Config* cfg) {
-    Log::get()->debug("Genome::mutateAddLink");
+void Genome::mutateAddLink(ushort maxTries) {
+    Log::get()->trace("Genome::mutateAddLink");
 
     MasterGenome& masterGenome = MasterGenome::getInstance();
 
@@ -167,9 +156,9 @@ void Genome::mutateAddLink(Config* cfg) {
         if(this->isMatch(it, genePtr->innovationIdx)) continue;
         else break;
  
-    } while(cnt <= cfg->AddLinkMaxTries);
+    } while(cnt <= maxTries);
 
-    if(cnt <= cfg->AddLinkMaxTries) {
+    if(cnt <= maxTries) {
         if(genePtr != nullptr) { //gene exist, insert into current genome
             Log::get()->debug("Insert existing gene before pos {0}", it-genes.begin());
             genes.insert(it, *genePtr);
@@ -247,7 +236,7 @@ MasterGenome& MasterGenome::getInstance() {
 }
 
 std::shared_ptr<Gene> MasterGenome::checkLinkExist(ushort from, ushort to) {
-    Log::get()->debug("MasterGenome::checkLinkExist: {0}-{1}", from, to);
+    Log::get()->trace("MasterGenome::checkLinkExist: {0}-{1}", from, to);
     //O(log n)
     auto it = genesSet.find(Gene(from, to, 0.0, 0));
     if(it != genesSet.end()) return std::make_shared<Gene>(*it);

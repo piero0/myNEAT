@@ -12,6 +12,6 @@ Gene::Gene(ushort from, ushort to, float weight, ushort innov) {
     childIdx = 0;
 }
 
-void Gene::print() const {
-    Log::get()->trace("{0} {1}-{2} {3}", innovationIdx, fromIdx, toIdx, weight);
+std::string Gene::print() const {
+    return std::to_string(innovationIdx) + " " + std::to_string(fromIdx) + "-" + std::to_string(toIdx) + " " + std::to_string(weight);
 }

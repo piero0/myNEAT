@@ -54,6 +54,9 @@ Config ConfigLoader::json2Config() {
     cfg.loglevel = pt.get("system.loglevel", "info");
     Log::get()->debug("loglevel: {0}", cfg.loglevel);
 
+    cfg.dumpGraphs = pt.get("system.dumpGraphs", false);
+    Log::get()->debug("dumpGraphs: {0}", cfg.dumpGraphs);
+
     cfg.randomseed = pt.get("system.randomseed", 0);
     Log::get()->debug("randomseed: {0}", cfg.randomseed);
 
@@ -101,8 +104,9 @@ std::pair<Config, Genome> ConfigLoader::parseConfig(std::string filename) {
         cfg = this->json2Config();
         g = this->json2Genome();
     } else {
-        Log::get()->error("JSON not loaded");
+        Log::get()->error("JSON config not loaded");
     }
 
+    Log::get()->info("Config loaded");
     return std::make_pair<>(cfg, g);
 }

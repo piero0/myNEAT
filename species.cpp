@@ -2,7 +2,7 @@
 
 using namespace pneat;
 
-Species::Species(Config* cfg) {
+Species::Species(std::shared_ptr<Config> cfg) {
     totalFitness = 0.0;
     this->cfg = cfg;
 }
@@ -21,7 +21,7 @@ void Species::updateFitness() {
     }
 }
  
-void Species::prepareFitness() {
+void Species::calcOffstringProbability() {
     //clamp fitness to  0.0-1.0 range
     totalFitness = std::accumulate(orgs.begin(), orgs.end(), 0.0, Organism::adder);
 
@@ -52,11 +52,9 @@ void Species::doCrossover() {
     */
     std::vector<Organism> newOrgs;
 
-    this->prepareFitness();
+    this->calcOffstringProbability();
 
     auto gen = Random::get<float>(0.0, 1.0);
-    //std::cout << dist.a() << " : " << dist.b() << std::endl;
-    //std::cout << dist.min() << " : " << dist.max() << std::endl;
 
     float f1,f2;
 
@@ -76,7 +74,7 @@ void Species::doCrossover() {
         Log::get()->debug("Child:   {0}", child.printGenes());
 
         if(gen.next() < cfg->AddNodeChance) child.mutateAddNode();
-        if(gen.next() < cfg->AddLinkChance) child.mutateAddLink(cfg);
+        if(gen.next() < cfg->AddLinkChance) child.mutateAddLink(cfg->AddLinkMaxTries);
         if(gen.next() < cfg->MutateWeightsChance) child.mutateWeights();
 
         Log::get()->debug("ChildMT: {0}", child.printGenes());

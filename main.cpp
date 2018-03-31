@@ -5,8 +5,7 @@ using namespace pneat;
 void RunNEAT(std::string configFile) {
     if(!Log::initLog()) return;
 
-    Random::init(1234);
-
+    Log::get()->info("Starting Experiment");
     auto cfg = ConfigLoader().parseConfig(configFile);
 
     if(!cfg.first.isValid) {
@@ -14,12 +13,14 @@ void RunNEAT(std::string configFile) {
         return;
     }
     Log::set_level(cfg.first.loglevel);
+    Random::init(cfg.first.randomseed);
 
     Population pop;
-    pop.initPopulation(&cfg.first, cfg.second);
+    pop.initPopulation(std::make_shared<Config>(cfg.first), cfg.second);
     pop.dump();
     pop.testLoop();
     pop.dump();
+    Log::get()->info("Experiment done");
 }
 
 int main(int argc, char* argv[]) {

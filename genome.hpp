@@ -42,7 +42,8 @@ namespace pneat {
                 );
             }
 
-            bool isMatch(geneIt, ushort);
+            bool isMatch(geneIt it, ushort innov) const { return it != genes.end() && it->innovationIdx == innov; }
+
             void insertExistingGenes(ushort innov);
             void createNewNodeFrom(Gene& g);
 
@@ -56,7 +57,7 @@ namespace pneat {
             
             void mutateWeights();
             void mutateAddNode();
-            void mutateAddLink(Config* cfg);
+            void mutateAddLink(ushort maxTries);
 
             Genome crossover(Genome& gnm);
     };

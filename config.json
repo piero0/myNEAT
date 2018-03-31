@@ -1,14 +1,15 @@
 {
     "config": {
         "population": 10,
-        "epochNum": 30,
+        "epochNum": 10,
         "AddLinkChance": 0.05,
         "AddNodeChance": 0.03,
         "MutateWeightsChance": 0.1,
         "AddLinkMaxTries": 5
     },
     "system": {
-        "loglevel": "trace",
+        "loglevel": "info",
+        "dumpGraphs": true,
         "randomseed": 0,
         "threads": 1
     },

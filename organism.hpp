@@ -13,8 +13,8 @@ namespace pneat {
             Genome& getGenome() { return g; }
 
             void setFitness(float fitness) { this->fitness = fitness; }
-            float getFitness() { return fitness; }
-            float getThresh() { return thresh; }
+            float getFitness() const { return fitness; }
+            float getThresh() const { return thresh; }
 
             float setThresh(float lastThresh, float totalFitness) { 
                 normFitness = fitness/totalFitness; 

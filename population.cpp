@@ -7,7 +7,7 @@ Population::Population():
     {
 }
 
-void Population::initPopulation(Config* cfg, Genome& baseGenome) {
+void Population::initPopulation(std::shared_ptr<Config> cfg, Genome& baseGenome) {
     Log::get()->debug("initPopulation");
 
     this->cfg = cfg;
@@ -28,17 +28,23 @@ void Population::testLoop() {
     for(std::size_t a=0; a<cfg->epochNum; a++) {
         Log::get()->debug("Epoch: {0}", a);
         sp.updateFitness();
-        sp.prepareFitness();
         sp.doCrossover();
 
-        int idx = 0;
-        for(auto& org: species[0].getOrganisms()) {
-            std::string filename = "graph/e" + std::to_string(a);
-            filename += "o" + std::to_string(idx);
-            Log::get()->debug("Saving {0}", filename);
-            org.dumpGraph(filename);
-            idx++;
+        if(cfg->dumpGraphs) {
+            Log::get()->info("Epoch dump");
+            for(auto& org: sp.getOrganisms()) {
+                 Log::get()->info(org.getGenome().printGenes());
+            }
+            Log::get()->info("Epoch dump end");
         }
+    }
+
+    if(cfg->dumpGraphs) { 
+        Log::get()->info("Master genome");
+        for(auto& g: MasterGenome::getInstance().getGenes()) {
+            Log::get()->info(g.print());
+        }
+        Log::get()->info("Master genome end");
     }
 }
 

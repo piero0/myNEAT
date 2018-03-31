@@ -24,6 +24,7 @@ struct Config {
     ushort AddLinkMaxTries;
     std::string loglevel;
     std::size_t randomseed;
+    bool dumpGraphs;
     bool isValid;
 
     Config(): isValid(false) {}
@@ -67,7 +68,7 @@ template<class T> class RndGen {
 
         T next() { return (isInt) ? intDist(Random::gen) : realDist(Random::gen); }
 };
-
+ 
 class Log {
     static logT logger; 
 

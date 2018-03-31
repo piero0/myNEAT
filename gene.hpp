@@ -87,7 +87,7 @@ class Gene {
         bool enabled;
 
         Gene(ushort from, ushort to, float weight, ushort innov);
-        void print() const;
+        std::string print() const;
 
         friend bool operator<(const Gene& g1, const Gene& g2) { 
             if(g1.fromIdx < g2.fromIdx) { return true; }
