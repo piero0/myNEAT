@@ -38,6 +38,7 @@ class Mode(Enum):
     START = 0
     GENOMES = 1
     GENES = 2
+    WEIGHTS = 3
 
 class ProgBar:
     @staticmethod
@@ -51,8 +52,9 @@ class LogParser:
         self.io = IO()
         self.mode = Mode.START
         self.epochs = [[]]
+        self.epochs2 = [[]]
         self.genes = []
-        self.sensors = 2
+        self.sensors = 1
         self.outputs = 1
 
     def line2genome(self, line):
@@ -61,10 +63,16 @@ class LogParser:
     def line2gene(self, line):
         return line.replace("-", " ").split(" ")[1:]
 
-    def entry2graph(self, entry):
-        return "{0}->{1} [label={2:.2f}];\n".format(entry[0], entry[1], float(entry[2]))
+    def line2weights(self, line):
+        return [float(i) for i in line.split("|")[1:-1]]
 
-    def genome2graph(self, genome, filename):
+    def entry2graph(self, entry, weight):
+        return "{0}->{1} [label={2:.2f}];\n".format(entry[0], entry[1], weight)
+
+    def setSensAndOut(self, line):
+        self.sensors, self.outputs = [int(i) for i in line.split("|")[1:-1]]
+
+    def genome2graph(self, eidx, gidx, filename):
         out = "digraph {0}".format(filename)
         out += " {\nrankdir=BT\n{rank=source;"
 
@@ -79,8 +87,8 @@ class LogParser:
         out += "}\n"
 
         #hidden
-        for idx in genome:
-            out += self.entry2graph(self.genes[int(idx)])
+        for widx, idx in enumerate(self.epochs[eidx][gidx]):
+            out += self.entry2graph(self.genes[int(idx)], self.epochs2[eidx][gidx][widx])
 
         out += "}"
 
@@ -98,18 +106,30 @@ class LogParser:
             if line == "Epoch dump":
                 epochIdx+=1
                 self.epochs.append([])
+                self.epochs2.append([])
                 self.mode = Mode.GENOMES
                 continue
 
             if line.startswith("|") and self.mode == Mode.GENOMES:
                 self.epochs[epochIdx].append(self.line2genome(line))
+                self.mode = Mode.WEIGHTS
+                continue
+
+            if line.startswith("|") and self.mode == Mode.WEIGHTS:
+                self.epochs2[epochIdx].append(self.line2weights(line))
+                self.mode = Mode.GENOMES
+                continue
 
             if line.startswith("Master genome"):
                 self.mode = Mode.GENES
                 continue
 
             if self.mode == Mode.GENES:
+                if line.startswith("|"):
+                    self.setSensAndOut(line)
+                    continue
                 self.genes.append(self.line2gene(line))
+
         print()
 
     def saveGVs(self):
@@ -120,7 +140,7 @@ class LogParser:
         for eidx, epoch in enumerate(self.epochs):
             for gidx, genome in enumerate(epoch):
                 filename = "e{0}g{1}".format(eidx, gidx)
-                gvData = self.genome2graph(genome, filename)
+                gvData = self.genome2graph(eidx, gidx, filename)
                 if not self.io.saveGV(filename + ".gv", gvData):
                     print("Error: Could not save {0}".format(filename))
                 ProgBar.draw(eidx*gNum + gidx, epNum*gNum)

@@ -33,7 +33,9 @@ void Population::testLoop() {
         if(cfg->dumpGraphs) {
             Log::get()->info("Epoch dump");
             for(auto& org: sp.getOrganisms()) {
-                 Log::get()->info(org.getGenome().printGenes());
+                auto& gnm = org.getGenome();
+                Log::get()->info(gnm.printGenes());
+                Log::get()->info(gnm.printWeights());
             }
             Log::get()->info("Epoch dump end");
         }
@@ -41,7 +43,10 @@ void Population::testLoop() {
 
     if(cfg->dumpGraphs) { 
         Log::get()->info("Master genome");
-        for(auto& g: MasterGenome::getInstance().getGenes()) {
+        auto& mg = MasterGenome::getInstance();
+        auto& nds = mg.getNodes();
+        Log::get()->info("|{0}|{1}|",nds.getSensorNum(), nds.getOutputNum());
+        for(auto& g: mg.getGenes()) {
             Log::get()->info(g.print());
         }
         Log::get()->info("Master genome end");

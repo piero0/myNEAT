@@ -54,6 +54,12 @@ namespace pneat {
                 for(auto& el: genes) txt += std::to_string(el.innovationIdx) + "|";
                 return txt;
             }
+
+            std::string printWeights() {
+                std::string txt = "|";
+                for(auto& el: genes) txt += std::to_string(el.weight) + "|";
+                return txt;
+            }
             
             void mutateWeights();
             void mutateAddNode();
