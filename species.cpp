@@ -9,7 +9,7 @@ Species::Species(Config* cfg) {
 
 void Species::updateFitness() {
     //fake update
-    auto gen = Util::getInstance().getFRndGen(-0.1, 0.1);
+    auto gen = Random::getRealRndGen(-0.1, 0.1);
 
     float fit, rnd;
 
@@ -56,7 +56,7 @@ void Species::doCrossover() {
 
     this->prepareFitness();
 
-    auto gen = utl.getFRndGen(0.0, 1.0);
+    auto gen = Random::getRealRndGen(0.0, 1.0);
     //std::cout << dist.a() << " : " << dist.b() << std::endl;
     //std::cout << dist.min() << " : " << dist.max() << std::endl;
 

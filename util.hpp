@@ -46,6 +46,48 @@ template<class outT, class distT> class Rnd {
         outT next() { return dist(gen); }
 };
 
+template<class> class Rnd2;
+
+class Random {
+    public:
+        static std::mt19937 gen;
+
+        static long getTime();
+        static void initRandomGen(std::size_t seed);
+
+        template<class T> static Rnd2<T> get(T begin, T end) {
+            return Rnd2<T>(begin, end);
+        }
+
+        Rnd<ushort, ushortDist> static getIntRndGen(ushort begin, ushort end) { return Rnd<ushort, ushortDist>(gen, begin, end); }
+        Rnd<float, floatDist> static getRealRndGen(float begin, float end) { return Rnd<float, floatDist>(gen, begin, end); }   
+};
+
+template<class T> class Rnd2 {
+    typedef typename std::conditional<std::is_integral<T>::value, T, int>::type safeInt;
+    typedef typename std::conditional<std::is_floating_point<T>::value, T, float>::type safeReal;
+
+    union {
+        std::uniform_int_distribution<safeInt> intDist;
+        std::uniform_real_distribution<safeReal> realDist;
+    };
+    bool isInt;
+
+    public:
+        Rnd2(T begin, T end): isInt(false) {
+            if(std::is_integral<T>::value) {
+                isInt = true;
+                intDist = std::uniform_int_distribution<safeInt>(begin, end);
+            } else if(std::is_floating_point<T>::value) {
+                realDist = std::uniform_real_distribution<safeReal>(begin, end);
+            } else {
+                throw std::invalid_argument("Random generator can be only int or real");
+            }
+        }
+
+        T next() { return (isInt) ? intDist(Random::gen) : realDist(Random::gen); }
+};
+
 class Log {
     static logT logger; 
 
@@ -87,7 +129,6 @@ class ConfigLoader {
 };
 
 class Util {
-    std::mt19937 gen;
     Util();
 
     public:
@@ -95,12 +136,7 @@ class Util {
         void operator=(Util const& u) = delete;
 
         static Util& getInstance();
-        static long getTime();
-        void initRandomGen(std::size_t seed);
 
         std::pair<Config, Genome> parseConfig(std::string filename);
-
-        Rnd<ushort, ushortDist> getSRndGen(ushort begin, ushort end) { return Rnd<ushort, ushortDist>(gen, begin, end); }
-        Rnd<float, floatDist> getFRndGen(float begin, float end) { return Rnd<float, floatDist>(gen, begin, end); }   
 };
 }

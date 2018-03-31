@@ -4,6 +4,7 @@
 using namespace pneat;
 
 logT Log::logger = nullptr; //Log::initLog();
+std::mt19937 Random::gen = std::mt19937();
 
 Util::Util() {}
 
@@ -12,13 +13,13 @@ Util& Util::getInstance() {
     return u;
 }
 
-void Util::initRandomGen(std::size_t seed) {
-    if(seed == 0) seed = Util::getTime();
+void Random::initRandomGen(std::size_t seed) {
+    if(seed == 0) seed = Random::getTime();
     Log::get()->info("Random Seed: {0}", seed);
-    gen = std::mt19937(seed);
+    Random::gen = std::mt19937(seed);
 }
 
-long Util::getTime() {
+long Random::getTime() {
     return std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::high_resolution_clock::now().time_since_epoch()
     ).count();

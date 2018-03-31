@@ -30,7 +30,7 @@ void Genome::mutateWeights() {
     Log::get()->trace("Genome::mutateWeights");
 
     Util& u = Util::getInstance();
-    auto gen = u.getFRndGen(-0.5, 0.5);
+    auto gen = Random::getRealRndGen(-0.5, 0.5);
 
     for(auto& el: genes) el.weight += gen.next();
 }
@@ -83,7 +83,7 @@ void Genome::mutateAddNode() {
     */
     //Randomly pick a link
     Util& rnd = Util::getInstance();
-    auto gen = rnd.getSRndGen(0, genes.size()-1);
+    auto gen = Random::getIntRndGen(0, genes.size()-1);
     ushort geneIdx = 0;
 
     while(true) {
@@ -136,8 +136,8 @@ void Genome::mutateAddLink(Config* cfg) {
         outNum = nodes.getOutputNum(),
         cnt = -1;
 
-    auto gen1 = rnd.getSRndGen(0, sensNum+hidNum-1);
-    auto gen2 = rnd.getSRndGen(0, outNum+hidNum-1);
+    auto gen1 = Random::getIntRndGen(0, sensNum+hidNum-1);
+    auto gen2 = Random::getIntRndGen(0, outNum+hidNum-1);
 
     std::shared_ptr<Gene> genePtr;
     geneIt it;
@@ -178,7 +178,7 @@ void Genome::mutateAddLink(Config* cfg) {
             genes.insert(it, *genePtr);
         } else { //doesn't exist, create and add at the end
             Log::get()->debug("Creating new link gene");
-            auto gen = rnd.getFRndGen(0.0, 1.0);
+            auto gen = Random::getRealRndGen(0.0, 1.0);
             auto g = Gene(fromIdx, toIdx, gen.next(), masterGenome.getNextInnovation());
             masterGenome.addGene(g);
             this->addGene(g);
@@ -191,7 +191,7 @@ void Genome::mutateAddLink(Config* cfg) {
 Genome Genome::crossover(Genome& gnm) {
     Log::get()->trace("Genome::crossover");
     auto& utl = Util::getInstance();
-    auto gen = utl.getFRndGen(0.0, 1.0);
+    auto gen = Random::getRealRndGen(0.0, 1.0);
 
     Genome child;
 

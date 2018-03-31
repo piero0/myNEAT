@@ -6,6 +6,8 @@ void RunNEAT(std::string configFile) {
     if(!Log::initLog()) return;
     Util& util = Util::getInstance();
 
+    Random::initRandomGen(1234);
+
     auto cfg = util.parseConfig(configFile);
 
     if(!cfg.first.isValid) {
