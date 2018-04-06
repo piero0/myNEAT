@@ -18,7 +18,7 @@ void RunNEAT(std::string configFile) {
     Population pop;
     pop.initPopulation(std::make_shared<Config>(cfg.first), cfg.second);
     pop.dump();
-    pop.testLoop();
+    pop.loop();
     pop.dump();
     Log::get()->info("Experiment done");
 }

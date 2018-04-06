@@ -36,8 +36,8 @@ Config ConfigLoader::json2Config() {
     cfg.population = pt.get("config.population", 0);
     Log::get()->debug("Population: {0}", cfg.population);
 
-    cfg.epochNum = pt.get("config.epochNum", 0);
-    Log::get()->debug("epochNum: {0}", cfg.epochNum);
+    cfg.maxEpoch = pt.get("config.maxEpoch", 0);
+    Log::get()->debug("maxEpoch: {0}", cfg.maxEpoch);
 
     cfg.AddLinkChance = pt.get("config.AddLinkChance", 0.0);
     Log::get()->debug("AddLinkChance: {0}", cfg.AddLinkChance);

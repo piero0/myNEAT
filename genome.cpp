@@ -52,7 +52,7 @@ void Genome::createNewNodeFrom(Gene& g) {
     Gene newTo = Gene(newNodeIdx, g.toIdx, 1.0f, newInnov+1);
 
     Log::get()->debug(newFrom.print());
-    Log::get()->debug(newTo.print());
+    Log::get()->debug(newTo.print()); 
  
     this->addLinkedNode(newFrom, newTo, newNodeIdx);
     mg.addLinkedNode(newFrom, newTo, newNodeIdx);

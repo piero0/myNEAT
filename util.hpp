@@ -17,7 +17,7 @@ using logT = std::shared_ptr<spdlog::logger>;
 
 struct Config {
     ushort population;
-    ushort epochNum;
+    ushort maxEpoch;
     float AddLinkChance;
     float AddNodeChance;
     float MutateWeightsChance;

@@ -92,7 +92,6 @@ void Species::doCrossover() {
 }
 
 void Species::getOutcasts() {
-
 }   
 
 void Species::calcCompatibilityDistans() {
@@ -101,5 +100,4 @@ void Species::calcCompatibilityDistans() {
 
 void Species::dump() {
     for(auto& el: orgs) el.dump();
-    //el.getGenome().print();
 }
