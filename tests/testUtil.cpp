@@ -6,12 +6,7 @@ using namespace pneat;
 
 TEST_CASE("Util", "[util]") {
     //use const seed to always get the same results (it's mt19937)
-    auto& g1 = Util::getInstance();
     Random::init(1234);
-
-    auto& g2 = Util::getInstance();
-    
-    REQUIRE(&g1 == &g2);
     
     SECTION("random int") {
         auto gen = Random::get<ushort>(0, 1);
@@ -32,7 +27,8 @@ TEST_CASE("Util", "[util]") {
 
     SECTION("json config") {
         std::string filename = "testConfig.json";
-        auto resp = g1.parseConfig(filename);
+        auto cl = ConfigLoader();
+        auto resp = cl.parseConfig(filename);
 
         REQUIRE(resp.first.population == 150);
         REQUIRE(resp.second.getGenes().size() == 5);

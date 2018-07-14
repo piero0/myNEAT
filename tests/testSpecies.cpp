@@ -5,7 +5,7 @@ using namespace pneat;
 
 TEST_CASE("Species", "[species]") {
     Config cfg;
-    Species spc(&cfg);
+    Species spc(std::make_shared<Config>(cfg));
     Genome gnm1;
 
     Organism o1(gnm1), o2(gnm1), o3(gnm1); 
@@ -25,7 +25,7 @@ TEST_CASE("Species", "[species]") {
     REQUIRE(orgs[2].getFitness() == o3.getFitness());
 
     SECTION("prepare fitness") {
-        spc.prepareFitness();
+        spc.calcOffstringProbability();
 
         REQUIRE(orgs[0].getThresh() <= 0.20f);
         REQUIRE(orgs[1].getThresh() <= 0.54f);
@@ -33,7 +33,7 @@ TEST_CASE("Species", "[species]") {
     }
 
     SECTION("randomPick") {
-        spc.prepareFitness();
+        spc.calcOffstringProbability();
 
         auto& org = spc.randomPick(0.19);
         REQUIRE(org.getFitness() == 0.3f);

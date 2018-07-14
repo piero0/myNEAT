@@ -1,7 +1,7 @@
 {
     "config": {
-        "population": 10,
-        "maxEpoch": 10,
+        "population": 100,
+        "maxEpoch": 70,
         "AddLinkChance": 0.05,
         "AddNodeChance": 0.03,
         "MutateWeightsChance": 0.1,

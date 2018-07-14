@@ -7,8 +7,6 @@ TEST_CASE("Genome", "[genome]") {
     Log::initLog();
     Log::set_level("trace");
     
-    auto& rnd = Util::getInstance();
-    //rnd.init(1234); //make sure we mutate the same way for each test
     Genome gnm;
 
     auto& g = gnm.getGenes();
@@ -72,8 +70,6 @@ TEST_CASE("Genome", "[genome]") {
     }
 
     SECTION("mutateAddLink") {
-        Config cfg;
-        cfg.AddLinkMaxTries = 1;
         Gene g1(0, 3, 0.5, 0), g2(1, 3, 0.7, 1), g3(3, 2, 0.1, 2);
 
         auto& nodes = gnm.getNodes();
@@ -84,13 +80,13 @@ TEST_CASE("Genome", "[genome]") {
         auto& mg = MasterGenome::getInstance();
         mg.initFromGenome(gnm);
 
-        gnm.mutateAddLink(&cfg);
+        gnm.mutateAddLink(1);
 
         Gene mut = gnm.getGenes()[3];
         REQUIRE(mut.fromIdx == 1);
         REQUIRE(mut.toIdx == 2);
 
-        gnm.mutateAddLink(&cfg);
+        gnm.mutateAddLink(1);
         mut = gnm.getGenes()[4];
         REQUIRE(mut.fromIdx == 0);
         REQUIRE(mut.toIdx == 0);

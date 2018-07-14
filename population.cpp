@@ -26,7 +26,7 @@ void Population::initPopulation(std::shared_ptr<Config> cfg, Genome& baseGenome)
 void Population::loop() {
     uint epochNum = 0;
 
-    while(cfg->maxEpoch > 0 && cfg->maxEpoch < epochNum) {
+    while(cfg->maxEpoch > 0 && cfg->maxEpoch > epochNum) {
 
         epochNum++;
 
@@ -44,7 +44,7 @@ void Population::loop() {
 }
 
 void Population::updateFitness(Species& sp) {
-    sp.updateFitness();
+    sp.updateFitness(); 
 }
 
 void Population::dumpEpoch(Species& sp) {
