@@ -1,8 +1,10 @@
 CXXFLAGS = -std=c++14 -Wall
 LDLIBS = -lpthread
 
+objdir = objs
+
 main = main.o
-objs = gene.o util.o genome.o organism.o species.o population.o
+objs = $(addprefix $(objdir)/, gene.o util.o genome.o organism.o species.o population.o ANNFactory.o )
  
 exec = main
 dynlib = libmyNEAT.so
@@ -14,7 +16,7 @@ debug: tests
 release: CXXFLAGS += -O2
 release: sharedobjs $(exec)
 
-#make dynlib a prerequisite to prevent --jobs issues
+#make dynlib a prerequisite to prevent '--jobs' issues
 tests: $(dynlib)
 	@$(MAKE) -C tests $(word 2, $(MAKECMDGOALS))
 
@@ -22,6 +24,9 @@ sharedobjs: CXXFLAGS += -fPIC
 sharedobjs: $(objs) sharedlib
 
 sharedlib: $(dynlib)
+
+$(objdir)/%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -shared -c -o $@ $^
 
 $(dynlib): $(objs)
 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
